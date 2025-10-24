@@ -19,7 +19,11 @@ import {
 
 interface TechItem {
   name: string;
-  icon: any;
+  icon: {
+    iconName: string;
+    prefix: string;
+    icon: [number, number, string[], string, string];
+  };
   category: 'programming' | 'design' | 'video';
 }
 

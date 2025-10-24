@@ -1,7 +1,6 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useInView } from 'framer-motion';
 import { useRef } from 'react';
 import TechStack from '@/components/TechStack';
 import SocialProfileLink from '@/components/SocialProfileLink';
