@@ -1,6 +1,7 @@
 'use client';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
   faReact,
   faJs,
@@ -19,11 +20,7 @@ import {
 
 interface TechItem {
   name: string;
-  icon: {
-    iconName: string;
-    prefix: string;
-    icon: [number, number, string[], string, string];
-  };
+  icon: IconDefinition;
   category: 'programming' | 'design' | 'video';
 }
 
