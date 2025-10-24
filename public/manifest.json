@@ -1,0 +1,27 @@
+{
+  "name": "Muhammad Khalid Atthoriq - Creative Developer",
+  "short_name": "Khalid Portfolio",
+  "description": "Creative developer and tech enthusiast specializing in web development, photography, videography, and UI/UX design.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/pics/Logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/pics/Logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity", "utilities"],
+  "lang": "en",
+  "dir": "ltr"
+} 
