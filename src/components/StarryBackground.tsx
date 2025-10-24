@@ -138,7 +138,7 @@ export default function StarryBackground({ children, className = '' }: StarryBac
 
     const createComet = () => {
       const side = Math.floor(Math.random() * 4);
-      let x, y, vx, vy;
+      let x, y;
       let targetX, targetY;
 
       switch(side) {
@@ -172,8 +172,8 @@ export default function StarryBackground({ children, className = '' }: StarryBac
       const distance = Math.sqrt(dx * dx + dy * dy);
       const speed = 2; // Slower speed
 
-      vx = (dx / distance) * speed;
-      vy = (dy / distance) * speed;
+      const vx = (dx / distance) * speed;
+      const vy = (dy / distance) * speed;
 
       comets.push({
         x,
@@ -219,7 +219,7 @@ export default function StarryBackground({ children, className = '' }: StarryBac
       time++;
 
       // Draw faded auroras with painted brush strokes
-      auroras.forEach((aurora, index) => {
+      auroras.forEach((aurora) => {
         ctx.save();
         
         // Slow drift movement

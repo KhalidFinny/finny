@@ -9,7 +9,6 @@ import { socialProfiles } from '@/data/socialData';
 
 export default function AboutSection() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-200px" });
 
   return (
     <section id="about" className="py-16 sm:py-24 px-4 sm:px-8" ref={ref}>

@@ -1,4 +1,4 @@
-import TechTag from './TechTag';
+// import TechTag from './TechTag';
 
 interface ProjectCardProps {
   title: string;
@@ -16,8 +16,7 @@ export default function ProjectCard({
   technologies, 
   gradient, 
   liveDemo, 
-  github, 
-  variant 
+  github
 }: ProjectCardProps) {
   return (
     <div className="bg-gray-800/30 border border-gray-700 hover:border-red-500/50 p-8 transition-all duration-500 group hover:bg-gray-800/50">

@@ -26,7 +26,7 @@ export default function HeroSection({ scrollToSection }: HeroSectionProps) {
               className="animate-fade-in-up"
             >
               <p className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-extralight text-white tracking-tight leading-none">
-                <span className="block font-thin text-gray-300">HI, I'M</span> KHALID
+                <span className="block font-thin text-gray-300">HI, I&apos;M</span> KHALID
               </p>
             </motion.div>
             

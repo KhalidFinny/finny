@@ -7,18 +7,13 @@ import {
   faPython,
   faCss3,
   faFigma,
-  faYoutube,
   faAngular,
   faLaravel,
 } from '@fortawesome/free-brands-svg-icons';
 import { 
   faDatabase,
-  faServer,
   faCode,
   faVideo as faVideoSolid,
-  faCamera as faCameraSolid,
-  faPaintBrush,
-  faFilm,
   faImage,
 } from '@fortawesome/free-solid-svg-icons';
 
