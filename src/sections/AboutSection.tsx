@@ -35,7 +35,7 @@ export default function AboutSection() {
               <div>
                 <h3 className="text-2xl font-light text-white mb-6 tracking-wide uppercase">About</h3>
                 <p className="text-gray-300 text-lg md:text-xl font-light leading-relaxed">
-                  Currently studying Applied Informatics at State Polytechnic of Malang, just a normal guy who likes to blend tech with creativity. Also a vroom vroom addict.
+                  Currently studying Applied Informatics at State Polytechnic of Malang, just a normal guy who likes to blend tech with creativity. Data enthusiast with a growing passion for machine learning. Also a vroom vroom addict.
                 </p>
               </div>
               

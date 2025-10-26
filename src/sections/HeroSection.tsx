@@ -47,10 +47,10 @@ export default function HeroSection({ scrollToSection }: HeroSectionProps) {
             transition={{ duration: 0.8, delay: 0.6 }}
           >
             <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-300 font-light tracking-wide uppercase">
-              Full Stack Developer, UI/UX Designer, Photographer, & Videographer
+              Full Stack Developer, Data Enthusiast, Machine Learning Enjoyer, UI/UX Designer, Photographer, & Videographer
             </p>
             <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-400 font-light tracking-wide max-w-2xl mx-auto leading-relaxed">
-              The guy who likes tech and also being creative, also a vroom vroom enthusiast.
+              The guy who likes tech and also being creative. Data enthusiast with a growing passion for machine learning and constantly learning. Also a vroom vroom enthusiast.
             </p>
           </motion.div>
 
