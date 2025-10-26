@@ -35,10 +35,10 @@ export const portfolioCategories: PortfolioCategory[] = [
       },
       { 
         id: "prog3", 
-        title: "Sehatin", 
-        image: "/pics/Sehatin.webp", 
+        title: "Machine Learning and Computer Vision Based Self photo", 
+        image: "/portofolio/self.webp", 
         category: "programming",
-        description: "Health platform for NCD prevention through comprehensive screening, health monitoring, and personalized lifestyle recommendations."
+        description: "Machine Learning and Computer Vision Based Self photo using fist recognition as the shutter trigger, made with python, opencv, and YoloV8."
       }
     ],
     seeMoreLink: "https://drive.google.com/drive/folders/1GKB7l--fYM1Pk6oBs9qdE7w8sXbMIDRM?usp=sharing"
