@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f6f2e9;
+  --foreground: #141827;
+  --surface: #fffdf8;
+  --surface-soft: #eee7da;
+  --line: #cfc4b4;
+  --text-muted: #4f5667;
+  --mclaren-silver: #dde2e9;
+  --mclaren-red: #d12739;
+  --premium-burgundy: #6e1f3d;
 }
 
 @theme inline {
@@ -12,17 +19,45 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  cursor: crosshair; /* Crosshair cursor for editorial precision */
 }
 
 body {
-  background: var(--background);
+  background:
+    radial-gradient(circle at 18% 22%, color-mix(in srgb, var(--mclaren-silver) 72%, transparent) 0%, transparent 52%),
+    radial-gradient(circle at 80% 78%, color-mix(in srgb, var(--premium-burgundy) 9%, transparent) 0%, transparent 48%),
+    radial-gradient(circle at 52% 54%, color-mix(in srgb, var(--mclaren-red) 4%, transparent) 0%, transparent 58%),
+    var(--background);
+  background-attachment: fixed;
   color: var(--foreground);
-  font-family: var(--font-patrick-hand), cursive;
+  font-family: 'Urbanist', sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+section {
+  background: transparent;
+}
+
+/* Custom Scrollbar - Editorial Minimal */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--premium-burgundy) 62%, white 38%);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--mclaren-red) 70%, var(--premium-burgundy) 30%);
 }
 
 /* Background fade-in animation */
@@ -104,44 +139,63 @@ body {
 
 /* Utility classes for animations */
 .animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out forwards;
+  animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-fade-in-left {
-  animation: fadeInLeft 0.6s ease-out forwards;
+  animation: fadeInLeft 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-fade-in-right {
-  animation: fadeInRight 0.6s ease-out forwards;
+  animation: fadeInRight 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.animate-scale-in {
-  animation: scaleIn 0.5s ease-out forwards;
+/* Vertical Text Helper */
+.vertical-text {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
 }
 
-.animate-pulse-hover:hover {
-  animation: pulse 0.3s ease-in-out;
+/* Image Grain Overlay */
+.grain::after {
+  content: "";
+  position: fixed;
+  top: -100%;
+  left: -100%;
+  width: 300%;
+  height: 300%;
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 9999;
+  animation: grain 8s steps(10) infinite;
 }
 
-.animate-bounce-hover:hover {
-  animation: bounce 0.6s ease-in-out;
+.paint-blob {
+  border-radius: 58% 42% 64% 36% / 38% 52% 48% 62%;
+  filter: blur(70px);
 }
 
-/* Smooth transitions for interactive elements */
-.smooth-transition {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.doodle-ring {
+  border: 2px dashed color-mix(in srgb, var(--premium-burgundy) 28%, transparent);
+  border-radius: 9999px;
 }
 
-.hover-lift:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+.editorial-pill {
+  border-radius: 9999px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
 }
 
-.hover-glow:hover {
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
-}
-
-/* Background fade-in animation class */
-.background-fade-in {
-  animation: backgroundFadeIn 1.5s ease-out forwards;
+@keyframes grain {
+  0%, 100% { transform:translate(0, 0) }
+  10% { transform:translate(-5%, -10%) }
+  20% { transform:translate(-15%, 5%) }
+  30% { transform:translate(7%, -25%) }
+  40% { transform:translate(-5%, 25%) }
+  50% { transform:translate(-15%, 10%) }
+  60% { transform:translate(15%, 0%) }
+  70% { transform:translate(0%, 15%) }
+  80% { transform:translate(3%, 35%) }
+  90% { transform:translate(-10%, 10%) }
 }

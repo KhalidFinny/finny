@@ -53,51 +53,48 @@ interface TechStackProps {
 }
 
 export default function TechStack({ className = '' }: TechStackProps) {
+  const sectionClasses = 'space-y-4 border-t border-[var(--line)] pt-6';
+  const labelClasses = 'text-base md:text-lg font-semibold text-[var(--foreground)] uppercase tracking-[0.14em]';
+
   return (
-    <div className={`space-y-8 ${className}`}>
-      {/* Programming */}
-      <div>
-        <div className="mb-6">
-          <h4 className="text-lg md:text-xl font-light text-white mb-2 tracking-wide uppercase">Programming</h4>
-          <div className="w-12 h-0.5 bg-red-400 mb-4"></div>
+    <div className={`space-y-7 ${className}`}>
+      <div className={sectionClasses}>
+        <div className="mb-2">
+          <h4 className={labelClasses}>Programming</h4>
         </div>
-        <div className="flex flex-wrap gap-2 sm:gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-2">
           {programmingTech.map((tech) => (
-            <div key={tech.name} className="flex items-center space-x-1 sm:space-x-2 bg-gray-800/50 px-2 sm:px-3 py-1 sm:py-2 rounded-lg border border-gray-700 hover:border-red-400/50 transition-colors group smooth-transition hover-lift">
-              <FontAwesomeIcon icon={tech.icon} className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 group-hover:text-white" />
-              <span className="text-gray-300 text-xs sm:text-sm lg:text-base font-light group-hover:text-white">{tech.name}</span>
+            <div key={tech.name} className="flex items-center gap-3 py-2 border-b border-white/10">
+              <FontAwesomeIcon icon={tech.icon} className="w-4 h-4 text-[var(--mclaren-red)]" />
+              <span className="text-base text-[var(--text-muted)] font-medium">{tech.name}</span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Design */}
-      <div>
-        <div className="mb-6">
-          <h4 className="text-lg md:text-xl font-light text-white mb-2 tracking-wide uppercase">Design & UI/UX</h4>
-          <div className="w-12 h-0.5 bg-red-400 mb-4"></div>
+      <div className={sectionClasses}>
+        <div className="mb-2">
+          <h4 className={labelClasses}>Design & UI/UX</h4>
         </div>
-        <div className="flex flex-wrap gap-2 sm:gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-2">
           {designTech.map((tech) => (
-            <div key={tech.name} className="flex items-center space-x-1 sm:space-x-2 bg-gray-800/50 px-2 sm:px-3 py-1 sm:py-2 rounded-lg border border-gray-700 hover:border-red-400/50 transition-colors group smooth-transition hover-lift">
-              <FontAwesomeIcon icon={tech.icon} className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 group-hover:text-white" />
-              <span className="text-gray-300 text-xs sm:text-sm lg:text-base font-light group-hover:text-white">{tech.name}</span>
+            <div key={tech.name} className="flex items-center gap-3 py-2 border-b border-white/10">
+              <FontAwesomeIcon icon={tech.icon} className="w-4 h-4 text-[var(--premium-burgundy)]" />
+              <span className="text-base text-[var(--text-muted)] font-medium">{tech.name}</span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Video & Motion */}
-      <div>
-        <div className="mb-6">
-          <h4 className="text-lg md:text-xl font-light text-white mb-2 tracking-wide uppercase">Video & Motion</h4>
-          <div className="w-12 h-0.5 bg-red-400 mb-4"></div>
+      <div className={sectionClasses}>
+        <div className="mb-2">
+          <h4 className={labelClasses}>Video & Motion</h4>
         </div>
-        <div className="flex flex-wrap gap-2 sm:gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-2">
           {videoTech.map((tech) => (
-            <div key={tech.name} className="flex items-center space-x-1 sm:space-x-2 bg-gray-800/50 px-2 sm:px-3 py-1 sm:py-2 rounded-lg border border-gray-700 hover:border-red-400/50 transition-colors group smooth-transition hover-lift">
-              <FontAwesomeIcon icon={tech.icon} className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 group-hover:text-white" />
-              <span className="text-gray-300 text-xs sm:text-sm lg:text-base font-light group-hover:text-white">{tech.name}</span>
+            <div key={tech.name} className="flex items-center gap-3 py-2 border-b border-white/10">
+              <FontAwesomeIcon icon={tech.icon} className="w-4 h-4 text-[var(--foreground)]" />
+              <span className="text-base text-[var(--text-muted)] font-medium">{tech.name}</span>
             </div>
           ))}
         </div>

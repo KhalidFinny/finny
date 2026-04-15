@@ -1,30 +1,23 @@
-'use client';
-
 import Navigation from '@/components/Navigation';
 import HeroSection from '@/sections/HeroSection';
 import AboutSection from '@/sections/AboutSection';
+import ExperienceSection from '@/sections/ExperienceSection';
 import PortfolioSection from '@/sections/PortfolioSection';
 import Footer from '@/components/Footer';
-import CosmicBackground from '@/components/StarryBackground';
 
-export default function Home() {
+export default function App() {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     element?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <div className="min-h-screen background-fade-in">
-      {/* Fixed cosmic background */}
-      <div className="fixed inset-0 z-0">
-        <CosmicBackground />
-      </div>
-      
-      {/* Content with proper z-index */}
+    <div className="min-h-screen grain relative text-[var(--foreground)] font-urbanist">
       <div className="relative z-10">
         <Navigation scrollToSection={scrollToSection} />
         <HeroSection scrollToSection={scrollToSection} />
         <AboutSection />
+        <ExperienceSection />
         <PortfolioSection />
         <Footer />
       </div>
