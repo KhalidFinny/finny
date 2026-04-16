@@ -46,7 +46,7 @@ export const portfolioCategories: PortfolioCategory[] = [
       },
       {
         id: "prog4",
-        title: "Self Stufio Machine Learning",
+        title: "Self Studio Machine Learning",
         image: "/portofolio/self.webp",
         category: "programming",
         description: "",
