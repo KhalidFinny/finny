@@ -1,16 +1,40 @@
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 
 interface NavigationProps {
   scrollToSection: (sectionId: string) => void;
 }
 
 export default function Navigation({ scrollToSection }: NavigationProps) {
+  const [activeSection, setActiveSection] = useState<string>('home');
+
   const navItems = [
     { id: 'home', label: 'HOME', number: '01' },
     { id: 'about', label: 'ABOUT', number: '02' },
     { id: 'experience', label: 'EXP', number: '03' },
     { id: 'portfolio', label: 'WORK', number: '04' },
   ];
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Find the currently active section
+      // Add a small offset (e.g., window.innerHeight / 3) to trigger earlier
+      const scrollPosition = window.scrollY + window.innerHeight / 3;
+
+      for (const item of [...navItems].reverse()) {
+        const element = document.getElementById(item.id);
+        if (element && element.offsetTop <= scrollPosition) {
+          setActiveSection(item.id);
+          break;
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Initial check
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <nav className="fixed inset-x-0 top-0 z-50 pointer-events-none">
@@ -48,20 +72,35 @@ export default function Navigation({ scrollToSection }: NavigationProps) {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, delay: 0.12, ease: 'easeOut' }}
         >
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => scrollToSection(item.id)}
-              className="group flex items-center gap-3 text-[var(--foreground)] hover:text-[var(--premium-burgundy)] transition-colors"
-            >
-              <span className="text-[10px] font-semibold tracking-[0.2em] text-[var(--text-muted)] group-hover:text-[var(--premium-burgundy)] transition-colors">
-                {item.number}
-              </span>
-              <span className="text-sm lg:text-base font-semibold tracking-[0.18em] border-b border-transparent group-hover:border-[var(--mclaren-red)] pb-0.5">
-                {item.label}
-              </span>
-            </button>
-          ))}
+          {navItems.map((item) => {
+            const isActive = activeSection === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => scrollToSection(item.id)}
+                className={`group flex items-center gap-3 transition-all duration-[0.6s] ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                  isActive ? 'text-[var(--mclaren-red)] -translate-x-2' : 'text-[var(--foreground)] hover:text-[var(--mclaren-red)]'
+                }`}
+              >
+                <div className={`h-px bg-[var(--mclaren-red)] transition-all duration-[0.6s] ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                  isActive ? 'w-5 opacity-100' : 'w-0 opacity-0'
+                }`} />
+                <div className="flex items-center gap-3">
+                  <span className={`text-[10px] font-semibold tracking-[0.2em] transition-colors duration-500 ${
+                    isActive ? 'text-[var(--mclaren-red)]' : 'text-[var(--text-muted)] group-hover:text-[var(--mclaren-red)]'
+                  }`}>
+                    {item.number}
+                  </span>
+                  <span className="text-sm lg:text-base font-semibold tracking-[0.18em] pb-0.5 relative overflow-hidden">
+                    {item.label}
+                    <div className={`absolute bottom-0 left-0 right-0 h-[1px] bg-[var(--mclaren-red)] origin-right transition-transform duration-500 ${
+                      isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                    }`} />
+                  </span>
+                </div>
+              </button>
+            );
+          })}
         </motion.div>
       </div>
 

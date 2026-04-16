@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview",
-    "lint": "eslint"
+    "preview": "npm run build && wrangler dev",
+    "lint": "eslint",
+    "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.1.0",
@@ -21,6 +22,7 @@
     "react-dom": "19.1.0"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.32.3",
     "@eslint/eslintrc": "^3",
     "@tailwindcss/vite": "^4.2.2",
     "@types/node": "^20",
@@ -30,6 +32,7 @@
     "eslint": "^9",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vite": "^8.0.8"
+    "vite": "^8.0.8",
+    "wrangler": "^4.83.0"
   }
 }

@@ -117,56 +117,73 @@ export default function PortfolioSection() {
               {categoryNotes[activeCategoryData.title] ?? 'Selected projects from this category.'}
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-5 md:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-y-20 gap-x-12 xl:gap-x-16 mt-16">
               {activeCategoryData.items.map((item, idx) => (
                 <motion.article
                   key={item.id}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 40 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-60px' }}
-                  transition={{ duration: 0.45, delay: idx * 0.04 }}
-                  className={`group border border-[var(--line)] bg-transparent overflow-hidden cursor-pointer transition-colors duration-300 hover:bg-[var(--surface)]/35 ${
+                  viewport={{ once: true, margin: '-100px' }}
+                  transition={{ duration: 0.8, delay: idx * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                  className={`group cursor-pointer flex flex-col ${
                     idx % 5 === 0 ? 'xl:col-span-4' : 'xl:col-span-2'
                   }`}
                   onClick={() => {
-                    if (item.youtubeEmbed) {
+                    if (item.link) {
+                      window.open(item.link, '_blank');
+                    } else if (item.youtubeEmbed) {
                       setSelectedVideo({ embed: item.youtubeEmbed, title: item.title });
                     } else {
                       setSelectedImage({ src: item.image, title: item.title });
                     }
                   }}
                 >
-                  <div className={`relative overflow-hidden ${idx % 5 === 0 ? 'aspect-[21/9]' : 'aspect-video'}`}>
+                  <div className="relative overflow-hidden w-full bg-[var(--line)]/10 aspect-[16/9]">
                     <motion.img
                       src={item.image}
                       alt={item.title}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      className="absolute inset-0 w-full h-full object-cover origin-center transition-transform duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.08] opacity-[0.95] group-hover:opacity-100"
                     />
-                    <div className="absolute inset-0 bg-black/6 group-hover:bg-black/2 transition-colors" />
-
-                    <div className="absolute inset-x-0 bottom-0 h-px bg-[var(--line)]/70" />
-
-                    <span className="absolute top-4 left-4 text-[11px] font-semibold tracking-[0.22em] text-white/90">
-                      {String(idx + 1).padStart(2, '0')}
-                    </span>
+                    
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-[1.5s]" />
 
                     {item.youtubeEmbed && (
-                      <div className="absolute top-4 right-4 w-10 h-10 border border-[var(--line)] bg-[var(--surface)]/92 flex items-center justify-center">
-                        <svg className="w-4 h-4 text-[var(--foreground)] ml-0.5" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M8 5v14l11-7z"/>
-                        </svg>
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                        <div className="w-16 h-16 rounded-full border border-white/50 backdrop-blur-md flex items-center justify-center">
+                          <svg className="w-5 h-5 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                          </svg>
+                        </div>
                       </div>
                     )}
                   </div>
 
-                  <div className="p-5 md:p-6 space-y-3 border-t border-[var(--line)]/75">
-                    <span className={`text-[11px] font-semibold uppercase tracking-[0.24em] ${activeStyle.accent}`}>
-                      {activeCategoryData.title}
-                    </span>
-                    <h4 className="text-2xl md:text-3xl font-semibold text-[var(--foreground)] leading-tight tracking-[-0.02em]">{item.title}</h4>
-                    <p className="text-base text-[var(--text-muted)] font-medium leading-relaxed line-clamp-2">
-                      {item.description}
-                    </p>
+                  <div className="pt-6 md:pt-8 pb-2 flex flex-col relative w-full">
+                    <div className="flex items-center w-full mb-5">
+                      <span className="text-[10px] md:text-[11px] font-medium tracking-[0.2em] text-[var(--text-muted)] w-8">
+                        {String(idx + 1).padStart(2, '0')}
+                      </span>
+                      <div className="h-px bg-[var(--line)] flex-1 mx-4 scale-x-100 origin-left transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:bg-[var(--foreground)]" />
+                      <span className={`text-[9px] md:text-[10px] font-bold uppercase tracking-[0.3em] ${activeStyle.accent} transition-colors duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]`}>
+                        {activeCategoryData.title}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-end justify-between">
+                      <h4 className="text-[2rem] md:text-[2.5rem] lg:text-[3rem] font-medium text-[var(--foreground)] tracking-[-0.04em] leading-[1.05] transition-transform duration-[0.8s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-3 py-1">
+                        {item.title}
+                      </h4>
+                      
+                      <span className="text-[var(--text-muted)] group-hover:text-[var(--foreground)] transition-all duration-[0.8s] ease-[cubic-bezier(0.16,1,0.3,1)] -translate-x-6 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 text-3xl font-light mb-2">
+                        ↗
+                      </span>
+                    </div>
+
+                    {item.description && item.description.trim() !== "" && (
+                      <p className="text-sm text-[var(--text-muted)] font-normal leading-relaxed line-clamp-2 mt-4 max-w-[85%] transition-opacity duration-700 opacity-70 group-hover:opacity-100">
+                        {item.description}
+                      </p>
+                    )}
                   </div>
                 </motion.article>
               ))}
