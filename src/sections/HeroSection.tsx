@@ -37,9 +37,8 @@ export default function HeroSection({ scrollToSection }: HeroSectionProps) {
           </motion.span>
 
           <motion.h1
-            className="relative text-[4.5rem] sm:text-[7.5rem] md:text-[11rem] lg:text-[14rem] font-semibold text-[var(--foreground)] leading-[0.72] tracking-[-0.1em]"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
+            className="relative text-[4.5rem] sm:text-[7.5rem] md:text-[11rem] lg:text-[14rem] font-semibold text-[var(--foreground)] leading-[0.72] tracking-[-0.1em] animate-hero-reveal"
+            animate={{ y: 0 }}
             transition={{ duration: 1.1, ease: 'easeOut' }}
           >
             <span className="block">KHALID</span>

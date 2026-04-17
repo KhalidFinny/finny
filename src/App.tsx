@@ -15,10 +15,12 @@ export default function App() {
     <div className="min-h-screen grain relative text-[var(--foreground)] font-urbanist">
       <div className="relative z-10">
         <Navigation scrollToSection={scrollToSection} />
-        <HeroSection scrollToSection={scrollToSection} />
-        <AboutSection />
-        <ExperienceSection />
-        <PortfolioSection />
+        <main id="main-content">
+          <HeroSection scrollToSection={scrollToSection} />
+          <AboutSection />
+          <ExperienceSection />
+          <PortfolioSection />
+        </main>
         <Footer />
       </div>
     </div>
