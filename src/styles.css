@@ -1,0 +1,328 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@plugin "tailwindcss-motion";
+
+/* finny — red-only light palette (2026-08-11).
+   Off-white base, pale red panels, red is the only accent family.
+*/
+@theme {
+  --color-wall: #F7F2ED;
+  --color-paper: #FFFDFC;
+  --color-canvas: #FBF7F3;
+  --color-ink: #18120F;
+  --color-graphite: #736661;
+  --color-mist: #A08F89;
+  --color-line: #E7D5D1;
+  --color-deep-line: #D7BBB6;
+  --color-steel: #8A7A75;
+  --color-brand: #970B2D;
+  --color-rosso: #C12A48;
+  --color-blush: #F8ECEE;
+  --color-mint: #F8ECEE;
+  --color-signal: #F8ECEE;
+
+  --font-sans: "Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+@font-face {
+  font-family: "Schibsted Grotesk";
+  src: url("/fonts/schibstedgrotesk-variable.woff2") format("woff2-variations");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/fonts/ibmplexmono-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/fonts/ibmplexmono-medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("/fonts/instrumentserif-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("/fonts/instrumentserif-italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-wall);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: var(--color-ink);
+    color: var(--color-wall);
+  }
+
+  a {
+    color: inherit;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.motion-enter {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity;
+}
+
+[data-motion-ready='true'] .motion-enter {
+  opacity: 1;
+  transform: none;
+}
+
+.motion-step-1 {
+  transition-delay: 0ms;
+}
+
+.motion-step-2 {
+  transition-delay: 40ms;
+}
+
+.motion-step-3 {
+  transition-delay: 80ms;
+}
+
+.motion-step-4 {
+  transition-delay: 120ms;
+}
+
+.motion-step-5 {
+  transition-delay: 160ms;
+}
+
+.motion-ui {
+  transition:
+    transform 160ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    opacity 160ms ease;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.motion-ui:hover {
+  transform: translateY(-2px);
+}
+
+.motion-ui-soft:hover {
+  transform: translateY(-2px) scale(1.006);
+}
+
+main > section:not(#home) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 800px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .motion-enter {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .motion-ui,
+  .motion-ui:hover,
+  .motion-ui-soft:hover {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+@keyframes ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes preview-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes page-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+.page-out {
+  animation: page-out 160ms ease-in both;
+}
+
+.page-grid {
+  background-image:
+    linear-gradient(to right, rgba(231, 213, 209, 0.5) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(231, 213, 209, 0.5) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-out {
+    animation: none;
+  }
+}
+
+/* Boot screen — instrument cluster self-test */
+@keyframes boot-sweep {
+  from {
+    transform: rotate(-90deg);
+  }
+  to {
+    transform: rotate(36deg);
+  }
+}
+
+@keyframes boot-step {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes boot-autohide {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+/* No-JS failsafe: never leave the mask covering the page. */
+.boot-mask {
+  animation: boot-autohide 1ms 3s forwards;
+}
+
+.boot-needle {
+  transform-origin: 120px 126px;
+  animation: boot-sweep 750ms cubic-bezier(0.22, 1, 0.36, 1) 250ms both;
+}
+
+.boot-check {
+  opacity: 0;
+  animation: boot-step 200ms ease-out both;
+}
+
+.boot-check-2 {
+  animation-delay: 400ms;
+}
+
+.boot-check-3 {
+  animation-delay: 800ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boot-needle {
+    animation: none;
+    transform: rotate(36deg);
+  }
+
+  .boot-check {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Scrollbars hidden — the machine keeps its seams clean. */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}

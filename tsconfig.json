@@ -1,4 +1,7 @@
 {
+  // NOTE: restored from the last committed tsconfig (HEAD), with two
+  // additions for the Cloudflare/TanStack stack: worker-configuration.d.ts
+  // is included so `cloudflare:workers` module declarations typecheck.
   "compilerOptions": {
     "target": "ESNext",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
@@ -17,6 +20,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "worker-configuration.d.ts"],
   "exclude": ["node_modules"]
 }

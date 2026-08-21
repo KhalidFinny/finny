@@ -1,0 +1,8 @@
+-- Seed core data required by the app (2026-08-19): categories for the
+-- project FK constraint and profile for the site identity copy.
+-- Uses INSERT OR IGNORE so re-applying is safe.
+INSERT OR IGNORE INTO "categories" ("id","title","see_more_link","sort_order") VALUES('programming','Programming','https://drive.google.com/drive/folders/1GKB7l--fYM1Pk6oBs9qdE7w8sXbMIDRM?usp=sharing',0);
+INSERT OR IGNORE INTO "categories" ("id","title","see_more_link","sort_order") VALUES('ui-ux','UI/UX Design','https://drive.google.com/file/d/1chC-iyWf599BFjHn7WU3EnQocImydr4s/view?usp=sharing',1);
+INSERT OR IGNORE INTO "categories" ("id","title","see_more_link","sort_order") VALUES('videography','Videography','https://drive.google.com/drive/folders/1nJ36224aH9--g42N2PEbcAlc2ipyWLwo?usp=sharing',2);
+INSERT OR IGNORE INTO "categories" ("id","title","see_more_link","sort_order") VALUES('photography','Photography','https://instagram.com/finny.picss',3);
+INSERT OR IGNORE INTO "profile" ("id","name","title","about_headline","about_profile","about_study","approach","approach_detail","approach_detail_2") VALUES(1,'Khalid Atthoriq','Fullstack Creative Developer','I design interfaces and build them to work.','I build fullstack apps, design interfaces, and create visual content.','I study Informatics Engineering at State Polytechnic of Malang. My work blends engineering with creative direction, so the result is functional and still has personality.','Build it clean. Make it workable. Give it character, soul, and life.','I keep layouts editorial and structured, but still easy for people to use.','I care about clear hierarchy, strong visuals, and smooth interactions.');
