@@ -21,4 +21,10 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  optimizeDeps: {
+    // wrangler (via the dev platform proxy) is a Node CLI — prebundling it
+    // trips over broken ESM entries (blake3-wasm). It's only imported
+    // server-side, so it never needs client optimization.
+    exclude: ['wrangler', 'blake3-wasm'],
+  },
 })

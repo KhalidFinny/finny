@@ -19,7 +19,7 @@ export default function MobileProjects({ projects }: { projects: Project[] }) {
                   />
                 ) : null}
                 <div className="p-4">
-                  <h2 className="font-serif text-xl leading-tight text-ink">{project.title}</h2>
+                  <h2 className="font-sans font-semibold text-xl leading-tight text-ink">{project.title}</h2>
                   <p className="mt-1 text-sm font-medium text-graphite">
                     {project.role || 'Lead developer'}
                   </p>

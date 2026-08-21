@@ -11,7 +11,7 @@ const MAIN = '"main": "./dist/server/server.js"'
 
 // 1. Remove main from wrangler.jsonc so the first build doesn't error
 let cfg = readFileSync(WRANGLER, 'utf8')
-cfg = cfg.replace(new RegExp(`\\s*${MAIN.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\n`), '\n')
+cfg = cfg.replace(new RegExp(`\\s*${MAIN.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\n`, 'g'), '\n')
 writeFileSync(WRANGLER, cfg)
 
 // 2. First build — generates dist/server/server.js

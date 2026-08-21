@@ -137,7 +137,7 @@ export default function Experience({ experiences }: { experiences: ExperienceIte
                         </p>
                       </div>
                       <div>
-                        <p className="font-serif text-xl leading-tight text-ink md:text-2xl">
+                        <p className="font-sans font-semibold text-xl leading-tight text-ink md:text-2xl">
                           {experience.role}
                         </p>
                         <p className="mt-1 text-sm font-medium text-graphite md:text-base">
@@ -219,7 +219,7 @@ export default function Experience({ experiences }: { experiences: ExperienceIte
                     <p className="font-mono text-xs uppercase tracking-[0.2em] text-graphite">
                       {shortenPeriod(experience.period)}
                     </p>
-                    <h3 className="mt-2 font-serif text-xl leading-tight text-ink">
+                    <h3 className="mt-2 font-sans font-semibold text-xl leading-tight text-ink">
                       {experience.role}
                     </h3>
                     <p className="mt-1 text-sm font-medium text-graphite">

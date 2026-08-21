@@ -56,7 +56,7 @@ export default function ProjectPreviewCard({ project }: { project: Project }) {
           <div className="flex items-center rounded-[14px] border border-line bg-canvas px-5 py-4">
             <h2
               id={titleId}
-              className="font-serif text-3xl leading-[1.05] text-ink md:text-4xl"
+              className="line-clamp-2 font-sans font-bold text-3xl leading-[1.05] text-ink md:text-4xl"
             >
               {project.title}
             </h2>

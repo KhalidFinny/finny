@@ -1,46 +1,46 @@
 {
-  // NOTE: reconstructed 2026-08-08. Name/compatibility_date/compatibility_flags/
-  // assets are verbatim from the last committed wrangler.jsonc; the D1 + R2
-  // bindings are reconstructed from the README contract and the D1 export
-  // (binding names DB/MEDIA, database finny-db, bucket finny-media).
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "finny",
+	// NOTE: reconstructed 2026-08-08. Name/compatibility_date/compatibility_flags/
+	// assets are verbatim from the last committed wrangler.jsonc; the D1 + R2
+	// bindings are reconstructed from the README contract and the D1 export
+	// (binding names DB/MEDIA, database finny-db, bucket finny-media).
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "finny",
   "main": "./dist/server/server.js",
-  "main": "./dist/server/server.js",
-  
-  
-  
-  
-  
-  
-  
-  
-  "compatibility_date": "2026-04-16",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
-  "observability": {
-    "enabled": true
-  },
-  "assets": {
-    "not_found_handling": "single-page-application"
-  },
-  "vars": {
-    "LASTFM_API_KEY": "fe4add4753f304e14dbb905bc502c098",
-    "LASTFM_USER": "ffiinnyy"
-  },
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "finny-db",
-      "database_id": "548c313e-86f1-4f33-864a-a80b76783e62",
-      "migrations_dir": "migrations"
-    }
-  ],
-  "r2_buckets": [
-    {
-      "binding": "MEDIA",
-      "bucket_name": "finny-media"
-    }
-  ],
+	"main": "./dist/server/server.js",
+	"compatibility_date": "2026-04-16",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"observability": {
+		"enabled": true
+	},
+	"assets": {
+		"not_found_handling": "single-page-application"
+	},
+	"routes": [
+		{ "pattern": "fiinnyy.my.id", "custom_domain": true }
+	],
+	"vars": {
+		"LASTFM_API_KEY": "fe4add4753f304e14dbb905bc502c098",
+		"LASTFM_USER": "ffiinnyy"
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "finny-db",
+			"database_id": "548c313e-86f1-4f33-864a-a80b76783e62",
+			"migrations_dir": "migrations"
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "MEDIA",
+			"bucket_name": "finny-media"
+		},
+		{
+			"bucket_name": "finny-media",
+			"binding": "finny_media",
+			"remote": true
+		}
+	],
 }

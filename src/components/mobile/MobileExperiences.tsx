@@ -17,7 +17,7 @@ export default function MobileExperiences({ experiences }: { experiences: Experi
                   {shortenPeriod(experience.period)}
                 </p>
                 <div className="mt-2 flex items-baseline justify-between gap-3">
-                  <h2 className="font-serif text-xl leading-tight text-ink">
+                  <h2 className="font-sans font-semibold text-xl leading-tight text-ink">
                     {experience.role}
                   </h2>
                   {isOngoing ? (

@@ -42,7 +42,7 @@ export default function ProjectsCatalog({ projects }: { projects: Project[] }) {
                     className="w-full px-5 py-5 text-left md:px-6 md:py-6"
                   >
                     <span className="block">
-                      <span className="line-clamp-2 font-serif text-xl leading-tight text-ink md:text-2xl">
+                      <span className="line-clamp-2 font-sans font-semibold text-xl leading-tight text-ink md:text-2xl">
                         {project.title}
                       </span>
                       <span className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs uppercase tracking-[0.18em] text-graphite md:text-sm">
