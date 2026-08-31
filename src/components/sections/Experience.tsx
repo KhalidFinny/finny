@@ -87,6 +87,10 @@ function buildSpecs(experiences: ExperienceItem[]) {
   ]
 }
 
+const SECTION_LABEL_CLS = 'ui-sticker-label'
+const CARD_LABEL_CLS = 'ui-label ui-label-brand'
+const META_LABEL_CLS = 'ui-label ui-label-muted'
+
 export default function Experience({ experiences }: { experiences: ExperienceItem[] }) {
   const currentId = experiences.find(
     (experience) => experience.period.endsWith('Present') && experience.type === 'work',
@@ -111,8 +115,8 @@ export default function Experience({ experiences }: { experiences: ExperienceIte
   return (
     <section id="experience">
       <div className="px-4 py-6 md:px-6">
-        <div className="md:grid md:grid-cols-2 md:gap-6">
-          <div className="space-y-4 md:space-y-5">
+        <div className="xl:grid xl:grid-cols-[minmax(0,1.55fr)_minmax(21rem,0.95fr)] xl:gap-6">
+          <div className="space-y-4 xl:space-y-5">
             {workLog.map((experience, index) => {
               const bullets = parseBullets(experience.description)
               const open = openIds.has(experience.id)
@@ -121,7 +125,7 @@ export default function Experience({ experiences }: { experiences: ExperienceIte
               return (
                 <article
                   key={experience.id}
-                  className={`motion-enter motion-step-${Math.min(index + 2, 5)} rounded-[14px] border border-line bg-paper transition-colors duration-200 hover:border-deep-line`}
+                  className={`group motion-enter motion-step-${Math.min(index + 2, 5)} rounded-[14px] border border-line bg-paper transition-colors duration-200 hover:border-ink hover:bg-canvas`}
                 >
                   <button
                     type="button"
@@ -130,23 +134,23 @@ export default function Experience({ experiences }: { experiences: ExperienceIte
                     onClick={() => toggle(experience.id)}
                     className="flex w-full items-center gap-4 px-5 py-5 text-left md:px-6 md:py-6"
                   >
-                    <div className="grid w-full items-center gap-x-8 gap-y-3 md:grid-cols-[minmax(0,12rem)_1fr_auto]">
-                      <div className="font-mono text-xs uppercase tracking-[0.2em] text-graphite md:text-sm">
-                        <p className="whitespace-nowrap normal-case tracking-normal">
+                    <div className="grid w-full items-center gap-x-8 gap-y-3 xl:grid-cols-[minmax(0,12rem)_1fr_auto]">
+                      <div className={META_LABEL_CLS}>
+                        <p className="normal-case tracking-normal">
                           {shortenPeriod(experience.period)}
                         </p>
                       </div>
                       <div>
-                        <p className="font-sans font-semibold text-xl leading-tight text-ink md:text-2xl">
+                        <p className="font-sans text-[1.125rem] font-medium leading-tight tracking-[-0.01em] text-ink transition-colors duration-200 group-hover:text-brand md:text-[1.375rem]">
                           {experience.role}
                         </p>
-                        <p className="mt-1 text-sm font-medium text-graphite md:text-base">
+                        <p className="mt-1 text-sm leading-relaxed text-graphite md:text-base">
                           {experience.company}
                         </p>
                       </div>
-                      <div className="flex items-center gap-3 justify-self-start md:justify-self-end">
+                      <div className="flex items-center gap-3 justify-self-start xl:justify-self-end">
                         {inService && (
-                          <span className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-graphite">
+                          <span className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em] text-brand">
                             <span
                               aria-hidden="true"
                               className="h-1.5 w-1.5 animate-pulse rounded-full bg-rosso"
@@ -173,8 +177,8 @@ export default function Experience({ experiences }: { experiences: ExperienceIte
                     }`}
                   >
                     <div className="min-h-0 overflow-hidden">
-                      <div className="grid gap-x-8 gap-y-5 border-t border-line px-5 pb-5 pt-4 md:grid-cols-[minmax(0,11rem)_1fr] md:px-6 md:pb-6">
-                        <p className="font-mono text-xs uppercase tracking-[0.2em] text-graphite md:text-sm">
+                      <div className="grid gap-x-8 gap-y-5 px-5 pb-5 pt-4 xl:grid-cols-[minmax(0,11rem)_1fr] md:px-6 md:pb-6">
+                        <p className={META_LABEL_CLS}>
                           {experience.location}
                         </p>
                         {bullets.length > 0 && (
@@ -200,32 +204,32 @@ export default function Experience({ experiences }: { experiences: ExperienceIte
               )
             })}
 
-            <p className="pt-2 font-mono text-xs uppercase tracking-[0.25em] text-graphite">
-              — end of log —
+            <p className={META_LABEL_CLS}>
+              End of log
             </p>
           </div>
 
-          <div className="mt-8 flex flex-col gap-6 md:mt-0">
+          <aside className="mt-8 flex flex-col gap-6 xl:mt-0 xl:pl-8">
             {education.map((experience, index) => {
               const bullets = parseBullets(experience.description)
               return (
-                <div key={experience.id}>
-                  <p className="font-mono text-xs uppercase tracking-[0.25em] text-graphite">
-                    — education —
+                <section key={experience.id}>
+                  <p className={SECTION_LABEL_CLS}>
+                    Education
                   </p>
                   <article
-                    className={`motion-enter motion-step-${Math.min(index + 3, 5)} mt-3 rounded-[14px] border border-line bg-paper p-5 transition-colors duration-200 hover:border-deep-line`}
+                    className={`motion-enter motion-step-${Math.min(index + 3, 5)} mt-3 rounded-[14px] border border-line bg-paper p-5 transition-colors duration-200`}
                   >
-                    <p className="font-mono text-xs uppercase tracking-[0.2em] text-graphite">
+                    <p className={META_LABEL_CLS}>
                       {shortenPeriod(experience.period)}
                     </p>
-                    <h3 className="mt-2 font-sans font-semibold text-xl leading-tight text-ink">
+                    <h3 className="mt-2 font-sans text-[1.125rem] font-medium leading-tight tracking-[-0.01em] text-ink md:text-[1.375rem]">
                       {experience.role}
                     </h3>
-                    <p className="mt-1 text-sm font-medium text-graphite">
+                    <p className="mt-1 text-sm leading-relaxed text-graphite md:text-base">
                       {experience.company}
                     </p>
-                    <p className="mt-3 font-mono text-xs uppercase tracking-[0.2em] text-graphite">
+                    <p className="mt-3 text-sm font-medium uppercase tracking-[0.14em] text-graphite">
                       {experience.location}
                     </p>
                     {bullets.length > 0 && (
@@ -245,31 +249,33 @@ export default function Experience({ experiences }: { experiences: ExperienceIte
                       </ul>
                     )}
                   </article>
-                </div>
+                </section>
               )
             })}
-            <p className="font-mono text-xs uppercase tracking-[0.25em] text-graphite">
-              — stats —
-            </p>
-            <dl className="mt-3 grid grid-cols-2 gap-2">
-              {specs.map((spec) => (
-                <div
-                  key={spec.label}
-                  className="motion-enter motion-step-5 rounded-[14px] border border-line bg-paper p-4 transition-colors duration-200 hover:border-deep-line"
-                >
-                  <dt className="font-mono text-xs uppercase tracking-[0.2em] text-graphite">
-                    {spec.label}
-                  </dt>
-                  <dd className="mt-1 truncate font-serif text-2xl leading-tight text-ink">
-                    {spec.value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
+            <section>
+              <p className={SECTION_LABEL_CLS}>
+                Stats
+              </p>
+              <dl className="mt-3 grid grid-cols-2 gap-2">
+                {specs.map((spec) => (
+                  <div
+                    key={spec.label}
+                    className="motion-enter motion-step-5 rounded-[14px] border border-line bg-paper p-4"
+                  >
+                    <dt className={CARD_LABEL_CLS}>
+                      {spec.label}
+                    </dt>
+                    <dd className="mt-1 truncate font-sans text-2xl font-medium leading-tight tracking-[-0.01em] text-ink">
+                      {spec.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
             <TopGearQuote />
+          </aside>
           </div>
         </div>
-      </div>
     </section>
   )
 }

@@ -19,8 +19,7 @@ export default function StatusBar() {
       {items.map((item) => (
         <div
           key={item.label}
-          data-hover="lift"
-          className="motion-enter motion-step-5 motion-ui border-b border-line px-4 py-3 last:col-span-2 last:border-b-0 md:border-b-0 md:border-r md:px-6 md:py-4 md:last:col-span-1"
+          className="motion-enter motion-step-5 border-b border-line px-4 py-3 last:col-span-2 last:border-b-0 md:border-b-0 md:border-r md:px-6 md:py-4 md:last:col-span-1"
         >
           <p className="text-sm font-medium uppercase tracking-[0.14em] text-brand">
             {item.label}

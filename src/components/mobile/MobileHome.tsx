@@ -17,7 +17,7 @@ export default function MobileHome() {
     <MobileShell>
       <section className="space-y-6">
         <div>
-          <p className="text-sm font-medium uppercase tracking-[0.14em] text-brand">
+          <p className="ui-sticker-label">
             Khalid Atthoriq
           </p>
           <h1 className="mt-3 font-serif text-4xl leading-[0.9] tracking-[-0.03em] text-ink [text-wrap:balance]">
@@ -33,45 +33,45 @@ export default function MobileHome() {
 
         <div className="space-y-4">
           <div>
-            <p className="font-mono text-xs uppercase tracking-[0.14em] text-brand">
+            <p className="ui-sticker-label">
               bball · creative
             </p>
             <img
               src="/portofolio/bball.webp"
               alt="Basketball motion shot"
               loading="lazy"
-              className="mt-2 aspect-[4/3] w-full rounded-[14px] border border-line object-cover"
+              className="mt-2 aspect-[4/3] w-full border border-line object-cover"
             />
           </div>
           <div>
-            <p className="font-mono text-xs uppercase tracking-[0.14em] text-brand">
+            <p className="ui-sticker-label">
               flower · creative
             </p>
             <img
               src="/portofolio/flower.webp"
               alt="Pink flowers photo"
               loading="lazy"
-              className="mt-2 aspect-[4/3] w-full rounded-[14px] border border-line object-cover"
+              className="mt-2 aspect-[4/3] w-full border border-line object-cover"
             />
           </div>
           <div>
-            <p className="font-mono text-xs uppercase tracking-[0.14em] text-brand">
+            <p className="ui-sticker-label">
               novaris · programming
             </p>
-            <div className="mt-2 rounded-[14px] border border-line bg-paper p-2">
-              <img
-                src="/pics/Novaris.webp"
-                alt="Novaris project"
-                loading="lazy"
-                className="aspect-[16/9] w-full bg-paper object-contain"
-              />
-            </div>
+            <img
+              src="/pics/Novaris.webp"
+              alt="Novaris project"
+              loading="lazy"
+              className="mt-2 aspect-[16/9] w-full object-contain"
+            />
           </div>
         </div>
 
         <div className="overflow-hidden rounded-[14px] border border-line bg-paper">
-          <div className="border-b border-line bg-paper px-4 py-2.5 text-sm font-medium uppercase tracking-[0.14em] text-brand">
-            Stack &amp; tools
+          <div className="px-4 pt-4">
+            <p className="ui-sticker-label">
+              Stack &amp; tools
+            </p>
           </div>
           <ul className="grid grid-cols-2 gap-x-4 gap-y-2 px-4 py-3.5">
             {STACK.map((item) => (

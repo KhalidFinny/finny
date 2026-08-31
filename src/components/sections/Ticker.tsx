@@ -28,7 +28,7 @@ export default function Ticker({
             {segments.map((segment) => (
               <li
                 key={`${copy}-${segment}`}
-                className="flex items-center gap-6 pr-6 font-mono text-xs uppercase tracking-[0.25em] text-graphite md:text-sm"
+                className="flex items-center gap-6 pr-6 text-sm font-medium uppercase tracking-[0.14em] text-graphite"
               >
                 <span>{segment}</span>
                 <span className="h-1 w-1 rounded-full bg-rosso" />

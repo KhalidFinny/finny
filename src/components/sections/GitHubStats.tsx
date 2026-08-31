@@ -35,7 +35,7 @@ function Heatmap({ days, total }: { days: GitHubStats['days']; total: number }) 
         <p className="text-sm font-medium uppercase tracking-[0.14em] text-graphite">
           {total} contributions in the last year
         </p>
-        <p className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-mist">
+        <p className="text-sm font-medium uppercase tracking-[0.14em] text-graphite">
           Less · more
         </p>
       </div>
@@ -66,12 +66,16 @@ function NumberTile({
   step?: number
 }) {
   return (
-    <div className={`motion-enter motion-step-${step} flex flex-col-reverse gap-3 rounded-[14px] border border-line bg-canvas p-5 transition-colors duration-200 hover:border-deep-line`}>
-      <dt className="text-sm font-medium uppercase tracking-[0.14em] text-brand">{label}</dt>
-      <dd className="text-4xl font-medium leading-none text-ink md:text-[2.6rem]">{value}</dd>
-      <span className="flex h-10 w-10 items-center justify-center rounded-[12px] border border-line bg-paper text-brand">
-        <FaIcon icon={icon} className="h-4 w-4" />
+    <div className={`motion-enter motion-step-${step} flex items-center gap-4 rounded-[14px] border border-line bg-canvas p-4 transition-colors duration-200 hover:border-deep-line md:p-5`}>
+      <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[14px] border border-line bg-paper text-brand">
+        <FaIcon icon={icon} className="h-6 w-6" />
       </span>
+      <div className="min-w-0">
+        <dt className="ui-label ui-label-muted">{label}</dt>
+        <dd className="mt-1 truncate text-3xl font-medium leading-none tracking-[-0.02em] text-ink md:text-4xl">
+          {value}
+        </dd>
+      </div>
     </div>
   )
 }
@@ -81,13 +85,13 @@ export default function GitHubStats({ stats }: { stats: GitHubStats }) {
   const maxLangCount = stats.topLanguages[0]?.count ?? 1
 
   return (
-    <section aria-labelledby="github-stats-heading" className="px-4 py-4 md:px-5 md:py-5">
+    <section aria-labelledby="github-stats-heading" className="px-4 py-6 md:px-6">
       <article className="motion-enter motion-step-3 rounded-[14px] border border-line bg-paper p-4 md:p-5">
         <Heatmap days={stats.days} total={stats.totalContributions} />
       </article>
 
-        <div className="mt-3 md:grid md:grid-cols-6 md:gap-3">
-          <article className="motion-enter motion-step-4 rounded-[14px] border border-line bg-paper p-4 md:col-span-2 md:p-5">
+        <div className="mt-3 xl:grid xl:grid-cols-6 xl:gap-3">
+          <article className="motion-enter motion-step-4 rounded-[14px] border border-line bg-paper p-4 md:p-5 xl:col-span-2">
             <div className="flex items-center gap-3.5">
               <img
                 src={user.avatarUrl}
@@ -99,7 +103,7 @@ export default function GitHubStats({ stats }: { stats: GitHubStats }) {
                 <h3 className="font-serif text-2xl leading-tight text-ink">
                   {user.name ?? user.login}
                 </h3>
-                <p className="mt-0.5 font-mono text-xs uppercase tracking-[0.2em] text-graphite">
+                <p className="mt-0.5 text-sm font-medium uppercase tracking-[0.14em] text-graphite">
                   @{user.login}
                 </p>
               </div>
@@ -112,14 +116,14 @@ export default function GitHubStats({ stats }: { stats: GitHubStats }) {
             </p>
           </article>
 
-          <dl className="mt-3 grid grid-cols-2 gap-3 md:col-span-4 md:mt-0 md:grid-cols-4">
+          <dl className="mt-3 grid grid-cols-2 gap-3 xl:col-span-4 xl:mt-0 xl:grid-cols-4">
             <NumberTile label="Stars" value={stats.totalStars} icon={faStar} step={3} />
             <NumberTile label="Forks" value={stats.totalForks} icon={faCodeBranch} step={4} />
             <NumberTile label="Repos" value={user.publicRepos} icon={faFolder} step={5} />
             <NumberTile label="Contributions" value={stats.totalContributions} icon={faChartColumn} step={5} />
           </dl>
 
-          <article className="motion-enter motion-step-4 mt-3 rounded-[14px] border border-line bg-paper p-4 md:col-span-3 md:mt-0 md:p-5">
+          <article className="motion-enter motion-step-4 mt-3 rounded-[14px] border border-line bg-paper p-4 md:p-5 xl:col-span-3 xl:mt-0">
             <h3 className="text-sm font-medium uppercase tracking-[0.14em] text-brand">
               Top languages
             </h3>
@@ -143,7 +147,7 @@ export default function GitHubStats({ stats }: { stats: GitHubStats }) {
             </ol>
           </article>
 
-          <dl className="mt-3 grid grid-cols-2 gap-3 md:col-span-3 md:mt-0">
+          <dl className="mt-3 grid grid-cols-2 gap-3 xl:col-span-3 xl:mt-0">
             <NumberTile label="Current streak" value={`${activity.currentStreak}d`} icon={faFire} step={3} />
             <NumberTile label="Longest streak" value={`${activity.longestStreak}d`} icon={faTrophy} step={4} />
             <NumberTile label="Active days" value={activity.activeDays} icon={faCalendarCheck} step={5} />

@@ -4,10 +4,11 @@ import type {
   UploadProjectMediaInput,
   UploadProjectMediaResult,
 } from '@/server/admin'
+import { PROJECT_DESCRIPTION_MAX_WORDS, countProjectDescriptionWords } from '@/lib/project-description'
 import Field from '@/components/admin/Field'
 import TagInput from '@/components/admin/TagInput'
 import TechSelect from '@/components/admin/TechSelect'
-import { ghostBtn, inputCls, panelCls, primaryBtn } from '@/components/admin/styles'
+import { ghostBtn, inputCls, labelCls, panelCls, primaryBtn } from '@/components/admin/styles'
 import { jsonToBullets, readFileAsDataUrl, splitLines } from '@/components/admin/utils'
 import Placeholder from '@/components/ui/Placeholder'
 
@@ -83,11 +84,11 @@ function MediaDropzone({
               : 'border-line bg-canvas text-graphite hover:border-deep-line'
         }`}
       >
-        <span className="font-mono text-xs uppercase tracking-[0.2em]">{label}</span>
+        <span className={labelCls}>{label}</span>
         <span className="text-sm leading-relaxed">
           Drag and drop {multiple ? 'images' : 'an image'} here or click to choose
         </span>
-        <span className="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-mist">
+        <span className="font-mono text-sm uppercase tracking-[0.18em] text-mist">
           {note}
         </span>
       </label>
@@ -140,6 +141,8 @@ export default function ProjectForm({
   const isBusy = isSaving || isUploading
   const existingGallery = splitLines(galleryText)
   const allGallery = [...existingGallery, ...galleryPreviews]
+  const descriptionWordCount = countProjectDescriptionWords(form.description ?? '')
+  const descriptionTooLong = descriptionWordCount > PROJECT_DESCRIPTION_MAX_WORDS
 
   const set = <K extends keyof Project>(key: K, value: Project[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -234,6 +237,11 @@ export default function ProjectForm({
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
+    if (descriptionTooLong) {
+      onNotice(`Keep project descriptions to ${PROJECT_DESCRIPTION_MAX_WORDS} words or fewer`)
+      return
+    }
+
     setIsUploading(true)
 
     try {
@@ -338,7 +346,7 @@ export default function ProjectForm({
       <MediaDropzone
         disabled={isBusy}
         label="Drop hero image"
-        note="Single image, max 8 MB. Upload happens on save."
+        note="Single image, max 8 MB."
         onFilesSelected={(files) => {
           void handlePrimaryFiles(files)
         }}
@@ -380,7 +388,7 @@ export default function ProjectForm({
         disabled={isBusy}
         label="Drop additional images"
         multiple
-        note="Append multiple images to the gallery. Upload happens on save."
+        note="Append multiple images to the gallery."
         onFilesSelected={(files) => {
           void handleGalleryFiles(files)
         }}
@@ -388,23 +396,30 @@ export default function ProjectForm({
       {allGallery.length > 0 ? (
         <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
           {allGallery.map((src, index) => (
-            <div key={`${src}-${index}`} className="group relative">
-              <img
-                src={src}
-                alt={`Gallery ${index + 1}`}
-                className="aspect-square w-full rounded-[12px] border border-line object-cover"
-                loading="lazy"
-              />
-              <button
-                type="button"
-                onClick={() => removeGalleryItem(index)}
-                disabled={isBusy}
-                aria-label={`Remove image ${index + 1}`}
-                className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-ink/70 text-canvas text-xs opacity-0 transition-opacity duration-150 group-hover:opacity-100"
-              >
-                ×
-              </button>
-            </div>
+            <figure key={`${src}-${index}`} className="group relative border border-line bg-paper p-1.5 pb-1">
+              <div className="relative overflow-hidden bg-canvas">
+                <img
+                  src={src}
+                  alt={`Gallery ${index + 1}`}
+                  className="aspect-[4/3] w-full object-cover"
+                  loading="lazy"
+                />
+                <button
+                  type="button"
+                  onClick={() => removeGalleryItem(index)}
+                  disabled={isBusy}
+                  aria-label={`Remove image ${index + 1}`}
+                  className="absolute right-1 top-1 flex h-7 w-7 items-center justify-center rounded-full bg-ink/70 text-canvas text-xs opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+                >
+                  ×
+                </button>
+              </div>
+              <figcaption className="px-0.5 pt-1.5">
+                <span className="font-mono text-xs uppercase tracking-[0.18em] text-graphite">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+              </figcaption>
+            </figure>
           ))}
         </div>
       ) : null}
@@ -419,7 +434,7 @@ export default function ProjectForm({
   /* ── Render ──────────────────────────────────────────────────────────── */
 
   return (
-    <form onSubmit={handleSubmit} className={`space-y-5 ${panelCls} bg-canvas p-4`}>
+    <form onSubmit={handleSubmit} className={`space-y-3 ${panelCls} bg-canvas p-4`}>
       {/* Header row */}
       <div className="grid gap-3 md:grid-cols-3">
         <Field label="Id">
@@ -435,11 +450,14 @@ export default function ProjectForm({
 
       <Field label="Description">
         <textarea className={inputCls} rows={4} value={form.description ?? ''} onChange={(event) => set('description', event.target.value)} />
+        <p className={`mt-2 text-sm leading-relaxed ${descriptionTooLong ? 'text-brand' : 'text-graphite'}`}>
+          {descriptionWordCount}/{PROJECT_DESCRIPTION_MAX_WORDS} words
+        </p>
       </Field>
 
       {isCreative ? (
         /* ── Creative layout: hero + gallery side by side ─────────────── */
-        <div className="grid gap-5 xl:grid-cols-2">
+        <div className="grid gap-3 xl:grid-cols-2">
           {heroSection}
           {gallerySection}
         </div>
@@ -497,7 +515,7 @@ export default function ProjectForm({
       )}
 
       <div className="flex flex-wrap gap-3 pt-1">
-        <button type="submit" className={primaryBtn} disabled={isBusy}>
+        <button type="submit" className={primaryBtn} disabled={isBusy || descriptionTooLong}>
           {isBusy ? 'Saving…' : 'Save'}
         </button>
         <button type="button" onClick={onCancel} className={ghostBtn} disabled={isBusy}>

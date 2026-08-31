@@ -1,21 +1,23 @@
 import { createServerFn } from '@tanstack/react-start'
 import type { Experience, Project, Social, Tech } from '@/types/site'
+import { PROJECT_DESCRIPTION_MAX_WORDS, countProjectDescriptionWords } from '@/lib/project-description'
 import { getDb } from '@/server/db'
+import { getRuntimeEnv } from '@/server/platform'
 import {
   collectProjectMediaKeys,
   getMediaBucket,
   mediaKeyToPath,
 } from '@/server/media'
 
-const ADMIN_KEY = 'ls400'
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024
 
+// Raster-only — SVG is denied because an uploaded SVG served from this origin
+// can execute scripts when opened as a top-level document (stored XSS).
 const IMAGE_EXTENSION_BY_TYPE: Record<string, string> = {
   'image/avif': 'avif',
   'image/gif': 'gif',
   'image/jpeg': 'jpg',
   'image/png': 'png',
-  'image/svg+xml': 'svg',
   'image/webp': 'webp',
 }
 
@@ -29,6 +31,35 @@ type ProjectMediaRow = Pick<Project, 'image' | 'gallery'>
 export interface UploadProjectMediaInput {
   fileName: string
   dataUrl: string
+}
+
+/** Every admin mutation carries the secret and asserts it server-side. */
+export interface AdminKeyed<T> {
+  input: T
+  adminKey: string
+}
+
+async function getAdminSecret(): Promise<string | null> {
+  const env = await getRuntimeEnv()
+  return env?.WORKER_SECRET ?? null
+}
+
+// Constant-time-ish comparison — no early exit on the first differing byte.
+function safeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false
+  let diff = 0
+  for (let i = 0; i < a.length; i++) {
+    diff |= a.charCodeAt(i) ^ b.charCodeAt(i)
+  }
+  return diff === 0
+}
+
+async function assertAdmin(adminKey: string | null | undefined): Promise<void> {
+  const secret = await getAdminSecret()
+  if (!secret) throw new Error('Admin secret is not configured')
+  if (typeof adminKey !== 'string' || !safeEqual(adminKey, secret)) {
+    throw new Error('Unauthorized')
+  }
 }
 
 async function requireDb(): Promise<D1Database> {
@@ -71,10 +102,17 @@ function getUploadStem(fileName: string) {
 function getUploadExtension(fileName: string, contentType: string) {
   const explicit = fileName.split('.').pop()?.toLowerCase()
   if (explicit && /^[a-z0-9]{1,5}$/.test(explicit)) {
+    if (explicit === 'svg' || explicit === 'html' || explicit === 'htm') {
+      throw new Error('This file type is not allowed')
+    }
     return explicit === 'jpeg' ? 'jpg' : explicit
   }
 
-  return IMAGE_EXTENSION_BY_TYPE[contentType] ?? 'bin'
+  const fallback = IMAGE_EXTENSION_BY_TYPE[contentType]
+  if (!fallback) {
+    throw new Error('Unsupported image type')
+  }
+  return fallback
 }
 
 async function normalizeProjectSortOrder(db: D1Database) {
@@ -87,24 +125,33 @@ async function normalizeProjectSortOrder(db: D1Database) {
 
 export const verifyAdminKey = createServerFn({ method: 'POST' })
   .validator((key: string) => key)
-  .handler(async ({ data: key }) => key === ADMIN_KEY)
+  .handler(async ({ data: key }) => {
+    const secret = await getAdminSecret()
+    return !!secret && typeof key === 'string' && safeEqual(key, secret)
+  })
 
 export const uploadProjectMedia = createServerFn({ method: 'POST' })
-  .validator((input: UploadProjectMediaInput) => input)
+  .validator((payload: AdminKeyed<UploadProjectMediaInput>) => payload)
   .handler(async ({ data }) => {
+    await assertAdmin(data.adminKey)
+
     const bucket = await getMediaBucket()
     if (!bucket) {
       throw new Error('Media storage unavailable — upload requires the MEDIA bucket')
     }
 
-    const { bytes, contentType } = decodeImageDataUrl(data.dataUrl)
-    const extension = getUploadExtension(data.fileName, contentType)
-    const stem = getUploadStem(data.fileName)
+    const { bytes, contentType } = decodeImageDataUrl(data.input.dataUrl)
+    if (contentType === 'image/svg+xml') {
+      throw new Error('SVG uploads are not allowed')
+    }
+
+    const extension = getUploadExtension(data.input.fileName, contentType)
+    const stem = getUploadStem(data.input.fileName)
     const key = `projects/${Date.now()}-${crypto.randomUUID()}-${stem}.${extension}`
 
     await bucket.put(key, bytes, {
       httpMetadata: { contentType },
-      customMetadata: { originalName: data.fileName },
+      customMetadata: { originalName: data.input.fileName },
     })
 
     return {
@@ -114,8 +161,15 @@ export const uploadProjectMedia = createServerFn({ method: 'POST' })
   })
 
 export const saveProject = createServerFn({ method: 'POST' })
-  .validator((project: Project) => project)
+  .validator((payload: AdminKeyed<Project>) => payload)
   .handler(async ({ data }) => {
+    await assertAdmin(data.adminKey)
+
+    const project = data.input
+    if (countProjectDescriptionWords(project.description ?? '') > PROJECT_DESCRIPTION_MAX_WORDS) {
+      throw new Error(`Keep project descriptions to ${PROJECT_DESCRIPTION_MAX_WORDS} words or fewer`)
+    }
+
     const db = await requireDb()
     await db
       .prepare(
@@ -124,32 +178,33 @@ export const saveProject = createServerFn({ method: 'POST' })
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .bind(
-        data.id,
-        data.category_id,
-        data.title,
-        data.role ?? '',
-        data.stack ?? '',
-        data.year ?? '',
-        data.status ?? 'done',
-        data.image ?? '',
-        data.description ?? '',
-        data.youtube_embed ?? null,
-        data.instagram_link ?? null,
-        data.google_drive_link ?? null,
-        data.link ?? null,
-        data.source_link ?? null,
-        data.gallery ?? null,
-        data.sort_order ?? 0,
+        project.id,
+        project.category_id,
+        project.title,
+        project.role ?? '',
+        project.stack ?? '',
+        project.year ?? '',
+        project.status ?? 'done',
+        project.image ?? '',
+        project.description ?? '',
+        project.youtube_embed ?? null,
+        project.instagram_link ?? null,
+        project.google_drive_link ?? null,
+        project.link ?? null,
+        project.source_link ?? null,
+        project.gallery ?? null,
+        project.sort_order ?? 0,
       )
       .run()
     return { ok: true }
   })
 
 export const reorderProjects = createServerFn({ method: 'POST' })
-  .validator((ids: string[]) => ids)
-  .handler(async ({ data: ids }) => {
+  .validator((payload: AdminKeyed<string[]>) => payload)
+  .handler(async ({ data }) => {
+    await assertAdmin(data.adminKey)
     const db = await requireDb()
-    const orderedIds = [...new Set(ids.filter(Boolean))]
+    const orderedIds = [...new Set(data.input.filter(Boolean))]
 
     for (const [index, id] of orderedIds.entries()) {
       await db.prepare('UPDATE projects SET sort_order = ? WHERE id = ?').bind(index, id).run()
@@ -159,9 +214,11 @@ export const reorderProjects = createServerFn({ method: 'POST' })
   })
 
 export const deleteProject = createServerFn({ method: 'POST' })
-  .validator((id: string) => id)
-  .handler(async ({ data: id }) => {
+  .validator((payload: AdminKeyed<string>) => payload)
+  .handler(async ({ data }) => {
+    await assertAdmin(data.adminKey)
     const db = await requireDb()
+    const id = data.input
     const project = await db
       .prepare('SELECT image, gallery FROM projects WHERE id = ?')
       .bind(id)
@@ -182,9 +239,11 @@ export const deleteProject = createServerFn({ method: 'POST' })
   })
 
 export const resetProjects = createServerFn({ method: 'POST' })
-  .validator((confirmed: boolean) => confirmed)
-  .handler(async ({ data: confirmed }) => {
-    if (!confirmed) {
+  .validator((payload: AdminKeyed<boolean>) => payload)
+  .handler(async ({ data }) => {
+    await assertAdmin(data.adminKey)
+
+    if (!data.input) {
       throw new Error('Confirmation required')
     }
 
@@ -204,9 +263,11 @@ export const resetProjects = createServerFn({ method: 'POST' })
   })
 
 export const saveExperience = createServerFn({ method: 'POST' })
-  .validator((experience: Experience) => experience)
+  .validator((payload: AdminKeyed<Experience>) => payload)
   .handler(async ({ data }) => {
+    await assertAdmin(data.adminKey)
     const db = await requireDb()
+    const experience = data.input
     await db
       .prepare(
         `INSERT OR REPLACE INTO experiences
@@ -214,69 +275,77 @@ export const saveExperience = createServerFn({ method: 'POST' })
          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .bind(
-        data.id,
-        data.role,
-        data.company,
-        data.location,
-        data.period,
-        data.description,
-        data.type,
-        data.sort_order,
+        experience.id,
+        experience.role,
+        experience.company,
+        experience.location,
+        experience.period,
+        experience.description,
+        experience.type,
+        experience.sort_order,
       )
       .run()
     return { ok: true }
   })
 
 export const deleteExperience = createServerFn({ method: 'POST' })
-  .validator((id: string) => id)
-  .handler(async ({ data: id }) => {
+  .validator((payload: AdminKeyed<string>) => payload)
+  .handler(async ({ data }) => {
+    await assertAdmin(data.adminKey)
     const db = await requireDb()
-    await db.prepare('DELETE FROM experiences WHERE id = ?').bind(id).run()
+    await db.prepare('DELETE FROM experiences WHERE id = ?').bind(data.input).run()
     return { ok: true }
   })
 
 export const saveSocial = createServerFn({ method: 'POST' })
-  .validator((social: Social) => social)
+  .validator((payload: AdminKeyed<Social>) => payload)
   .handler(async ({ data }) => {
+    await assertAdmin(data.adminKey)
     const db = await requireDb()
+    const social = data.input
     await db
       .prepare('INSERT OR REPLACE INTO socials (id, url, sort_order) VALUES (?, ?, ?)')
-      .bind(data.id, data.url, data.sort_order)
+      .bind(social.id, social.url, social.sort_order)
       .run()
     return { ok: true }
   })
 
 export const deleteSocial = createServerFn({ method: 'POST' })
-  .validator((id: number) => id)
-  .handler(async ({ data: id }) => {
+  .validator((payload: AdminKeyed<number>) => payload)
+  .handler(async ({ data }) => {
+    await assertAdmin(data.adminKey)
     const db = await requireDb()
-    await db.prepare('DELETE FROM socials WHERE id = ?').bind(id).run()
+    await db.prepare('DELETE FROM socials WHERE id = ?').bind(data.input).run()
     return { ok: true }
   })
 
 export const saveTech = createServerFn({ method: 'POST' })
-  .validator((tech: Tech) => tech)
+  .validator((payload: AdminKeyed<Tech>) => payload)
   .handler(async ({ data }) => {
+    await assertAdmin(data.adminKey)
     const db = await requireDb()
+    const tech = data.input
     await db
       .prepare('INSERT OR REPLACE INTO techs (id, name, category, sort_order) VALUES (?, ?, ?, ?)')
-      .bind(data.id, data.name, data.category, data.sort_order)
+      .bind(tech.id, tech.name, tech.category, tech.sort_order)
       .run()
     return { ok: true }
   })
 
 export const deleteTech = createServerFn({ method: 'POST' })
-  .validator((id: number) => id)
-  .handler(async ({ data: id }) => {
+  .validator((payload: AdminKeyed<number>) => payload)
+  .handler(async ({ data }) => {
+    await assertAdmin(data.adminKey)
     const db = await requireDb()
-    await db.prepare('DELETE FROM techs WHERE id = ?').bind(id).run()
+    await db.prepare('DELETE FROM techs WHERE id = ?').bind(data.input).run()
     return { ok: true }
   })
 
 export const saveCvPath = createServerFn({ method: 'POST' })
-  .validator((path: string) => path)
-  .handler(async ({ data: path }) => {
+  .validator((payload: AdminKeyed<string>) => payload)
+  .handler(async ({ data }) => {
+    await assertAdmin(data.adminKey)
     const db = await requireDb()
-    await db.prepare('UPDATE profile SET cv_path = ? WHERE id = 1').bind(path).run()
+    await db.prepare('UPDATE profile SET cv_path = ? WHERE id = 1').bind(data.input).run()
     return { ok: true }
   })

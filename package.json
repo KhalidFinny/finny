@@ -11,7 +11,7 @@
     "preview": "vite preview",
     "deploy": "node scripts/deploy.mjs",
     "cf-typegen": "wrangler types",
-    "postinstall": "sh scripts/patch-workerd-stream.sh 2>/dev/null || true"
+    "postinstall": "sh scripts/patch-blake3-esm.sh 2>/dev/null || true; sh scripts/patch-workerd-stream.sh 2>/dev/null || true"
   },
   "dependencies": {
     "@fortawesome/free-brands-svg-icons": "^7.3.1",

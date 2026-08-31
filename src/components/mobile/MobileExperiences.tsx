@@ -13,7 +13,7 @@ export default function MobileExperiences({ experiences }: { experiences: Experi
           return (
             <li key={experience.id}>
               <article className="rounded-[14px] border border-line bg-paper p-4">
-                <p className="font-mono text-xs uppercase tracking-[0.2em] text-graphite">
+                <p className="ui-label ui-label-muted">
                   {shortenPeriod(experience.period)}
                 </p>
                 <div className="mt-2 flex items-baseline justify-between gap-3">
@@ -21,17 +21,17 @@ export default function MobileExperiences({ experiences }: { experiences: Experi
                     {experience.role}
                   </h2>
                   {isOngoing ? (
-                    <span className="inline-flex shrink-0 items-center gap-1.5 font-mono text-xs uppercase tracking-[0.2em] text-graphite">
+                    <span className="inline-flex shrink-0 items-center gap-1.5 text-sm font-medium uppercase tracking-[0.14em] text-brand">
                       <span
                         aria-hidden="true"
                         className="h-1.5 w-1.5 animate-pulse rounded-full bg-rosso"
                       />
-                      Active
+                      In service
                     </span>
                   ) : null}
                 </div>
                 <p className="mt-1 text-sm font-medium text-graphite">{experience.company}</p>
-                <p className="mt-2 font-mono text-xs uppercase tracking-[0.2em] text-graphite">
+                <p className="mt-2 ui-label ui-label-muted">
                   {experience.location}
                 </p>
                 {bullets.length > 0 ? (

@@ -43,16 +43,15 @@ async function handleMediaRequest(request: Request) {
     }
     headers.set('etag', object.httpEtag)
     headers.set('cache-control', 'public, max-age=31536000, immutable')
+    headers.set('x-content-type-options', 'nosniff')
+    headers.set('content-security-policy', "default-src 'none'")
 
     return new Response(request.method === 'HEAD' ? null : object.body, {
       status: 200,
       headers,
     })
-  } catch (error) {
-    return new Response(
-      `Media request failed: ${error instanceof Error ? error.message : String(error)}`,
-      { status: 500 },
-    )
+  } catch {
+    return new Response('Media request failed', { status: 500 })
   }
 }
 

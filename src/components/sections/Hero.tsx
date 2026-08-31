@@ -13,7 +13,7 @@ export default function Hero({ profile }: { profile: Profile }) {
     >
       <div className="relative mx-auto w-full max-w-5xl">
         {/* Instrument header: model designation + indicator lamp */}
-        <div className="motion-opacity-in motion-duration-200 flex flex-wrap items-center justify-between gap-3 font-mono text-xs uppercase tracking-[0.25em] text-graphite md:text-sm">
+        <div className="motion-opacity-in motion-duration-200 flex flex-wrap items-center justify-between gap-3 text-sm font-medium uppercase tracking-[0.14em] text-graphite">
           <p>{profile.title}</p>
           <p className="flex items-center gap-2">
             <span aria-hidden="true" className="h-1.5 w-1.5 animate-pulse rounded-full bg-rosso" />
@@ -37,7 +37,7 @@ export default function Hero({ profile }: { profile: Profile }) {
         </div>
 
         {/* Trip computer readouts */}
-        <div className="mt-10 grid grid-cols-1 gap-x-10 gap-y-3 font-mono text-xs uppercase tracking-[0.2em] text-graphite sm:grid-cols-3 md:text-sm">
+        <div className="mt-10 grid grid-cols-1 gap-x-10 gap-y-3 text-sm font-medium uppercase tracking-[0.14em] text-graphite sm:grid-cols-3">
           <p className="motion-opacity-in motion-duration-200 motion-delay-200 flex items-center gap-2.5">
             <span aria-hidden="true" className="h-1 w-1 shrink-0 bg-rosso" />
             <span>Current — intern @ PT Intelix Global Crossing</span>
@@ -55,7 +55,7 @@ export default function Hero({ profile }: { profile: Profile }) {
         {/* Ignition */}
         <Link
           to="/projects"
-          className="motion-opacity-in motion-duration-250 motion-delay-350 mt-14 inline-flex min-h-11 items-center justify-center gap-2.5 rounded-full border border-ink px-7 py-3 font-mono text-xs uppercase tracking-[0.25em] text-ink transition-colors duration-200 hover:bg-ink hover:text-canvas md:text-sm"
+          className="motion-opacity-in motion-duration-250 motion-delay-350 mt-14 inline-flex min-h-11 items-center justify-center gap-2.5 rounded-full border border-ink px-7 py-3 text-sm font-medium uppercase tracking-[0.14em] text-ink transition-colors duration-200 hover:bg-ink hover:text-canvas"
         >
           See the work
           <ArrowDown className="h-4 w-4" />

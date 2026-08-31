@@ -39,7 +39,10 @@ export interface AdminMutations {
   saveCvPathMutation: UseMutationResult<OkResult, Error, string>
 }
 
-export function useAdminMutations(onNotice: (message: string | null) => void): AdminMutations {
+export function useAdminMutations(
+  adminKey: string,
+  onNotice: (message: string | null) => void,
+): AdminMutations {
   const queryClient = useQueryClient()
 
   const invalidate = async () => {
@@ -49,7 +52,7 @@ export function useAdminMutations(onNotice: (message: string | null) => void): A
   const onError = (error: Error) => onNotice(error.message)
 
   const saveProjectMutation = useMutation({
-    mutationFn: (project: Project) => saveProject({ data: project }),
+    mutationFn: (project: Project) => saveProject({ data: { input: project, adminKey } }),
     onSuccess: async () => {
       onNotice('Project saved')
       await invalidate()
@@ -58,12 +61,13 @@ export function useAdminMutations(onNotice: (message: string | null) => void): A
   })
 
   const uploadProjectMediaMutation = useMutation({
-    mutationFn: (input: UploadProjectMediaInput) => uploadProjectMedia({ data: input }),
+    mutationFn: (input: UploadProjectMediaInput) =>
+      uploadProjectMedia({ data: { input, adminKey } }),
     onError,
   })
 
   const reorderProjectsMutation = useMutation({
-    mutationFn: (ids: string[]) => reorderProjects({ data: ids }),
+    mutationFn: (ids: string[]) => reorderProjects({ data: { input: ids, adminKey } }),
     onSuccess: async () => {
       onNotice('Project order saved')
       await invalidate()
@@ -72,7 +76,7 @@ export function useAdminMutations(onNotice: (message: string | null) => void): A
   })
 
   const resetProjectsMutation = useMutation({
-    mutationFn: (confirmed: boolean) => resetProjects({ data: confirmed }),
+    mutationFn: (confirmed: boolean) => resetProjects({ data: { input: confirmed, adminKey } }),
     onSuccess: async () => {
       onNotice('All projects reset')
       await invalidate()
@@ -81,7 +85,7 @@ export function useAdminMutations(onNotice: (message: string | null) => void): A
   })
 
   const deleteProjectMutation = useMutation({
-    mutationFn: (id: string) => deleteProject({ data: id }),
+    mutationFn: (id: string) => deleteProject({ data: { input: id, adminKey } }),
     onSuccess: async () => {
       onNotice('Project deleted')
       await invalidate()
@@ -90,7 +94,7 @@ export function useAdminMutations(onNotice: (message: string | null) => void): A
   })
 
   const saveExperienceMutation = useMutation({
-    mutationFn: (experience: Experience) => saveExperience({ data: experience }),
+    mutationFn: (experience: Experience) => saveExperience({ data: { input: experience, adminKey } }),
     onSuccess: async () => {
       onNotice('Experience saved')
       await invalidate()
@@ -99,7 +103,7 @@ export function useAdminMutations(onNotice: (message: string | null) => void): A
   })
 
   const deleteExperienceMutation = useMutation({
-    mutationFn: (id: string) => deleteExperience({ data: id }),
+    mutationFn: (id: string) => deleteExperience({ data: { input: id, adminKey } }),
     onSuccess: async () => {
       onNotice('Experience deleted')
       await invalidate()
@@ -108,7 +112,7 @@ export function useAdminMutations(onNotice: (message: string | null) => void): A
   })
 
   const saveSocialMutation = useMutation({
-    mutationFn: (social: Social) => saveSocial({ data: social }),
+    mutationFn: (social: Social) => saveSocial({ data: { input: social, adminKey } }),
     onSuccess: async () => {
       onNotice('Social saved')
       await invalidate()
@@ -117,7 +121,7 @@ export function useAdminMutations(onNotice: (message: string | null) => void): A
   })
 
   const deleteSocialMutation = useMutation({
-    mutationFn: (id: number) => deleteSocial({ data: id }),
+    mutationFn: (id: number) => deleteSocial({ data: { input: id, adminKey } }),
     onSuccess: async () => {
       onNotice('Social deleted')
       await invalidate()
@@ -126,7 +130,7 @@ export function useAdminMutations(onNotice: (message: string | null) => void): A
   })
 
   const saveTechMutation = useMutation({
-    mutationFn: (tech: Tech) => saveTech({ data: tech }),
+    mutationFn: (tech: Tech) => saveTech({ data: { input: tech, adminKey } }),
     onSuccess: async () => {
       onNotice('Tech saved')
       await invalidate()
@@ -135,7 +139,7 @@ export function useAdminMutations(onNotice: (message: string | null) => void): A
   })
 
   const deleteTechMutation = useMutation({
-    mutationFn: (id: number) => deleteTech({ data: id }),
+    mutationFn: (id: number) => deleteTech({ data: { input: id, adminKey } }),
     onSuccess: async () => {
       onNotice('Tech deleted')
       await invalidate()
@@ -144,7 +148,7 @@ export function useAdminMutations(onNotice: (message: string | null) => void): A
   })
 
   const saveCvPathMutation = useMutation({
-    mutationFn: (path: string) => saveCvPath({ data: path }),
+    mutationFn: (path: string) => saveCvPath({ data: { input: path, adminKey } }),
     onSuccess: async () => {
       onNotice('CV path saved')
       await invalidate()

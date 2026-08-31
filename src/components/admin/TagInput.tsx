@@ -59,7 +59,7 @@ export default function TagInput({
           {tags.map((tag, index) => (
             <span
               key={`${tag}-${index}`}
-              className="inline-flex items-center gap-1.5 rounded-full border border-line bg-paper px-2.5 py-0.5 font-mono text-[0.68rem] uppercase tracking-[0.18em] text-graphite"
+              className="inline-flex items-center gap-1.5 rounded-full border border-line bg-paper px-2.5 py-0.5 font-mono text-xs uppercase tracking-[0.18em] text-graphite"
             >
               {tag}
               <button

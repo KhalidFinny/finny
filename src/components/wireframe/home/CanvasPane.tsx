@@ -1,3 +1,6 @@
+import { useRef, useState, type PointerEvent, type ReactNode } from 'react'
+import { cn } from '@/components/ui/cn'
+
 const stackTools = [
   'React',
   'JavaScript',
@@ -20,164 +23,281 @@ const stackTools = [
   'MySQL',
 ] as const
 
-const PILL_CLS =
-  'inline-block rounded-sm bg-paper px-2 py-1 font-mono text-xs uppercase tracking-[0.14em] text-brand ring-1 ring-line'
+function StackToolsPanel() {
+  return (
+    <div className="overflow-hidden rounded-[14px] border border-line bg-paper">
+      <div className="flex items-center justify-between gap-4 border-b border-line bg-paper px-4 py-2.5">
+        <span className="ui-sticker-label">Stack &amp; tools</span>
+        <span className="ui-label ui-label-muted">· ×</span>
+      </div>
+      <ul className="grid grid-cols-2 gap-x-4 gap-y-2 px-4 py-3.5">
+        {stackTools.map((item) => (
+          <li key={item} className="text-sm text-ink">
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+type DragSnapshot = {
+  pointerId: number
+  startX: number
+  startY: number
+  offsetX: number
+  offsetY: number
+}
+
+function DraggablePiece({
+  className,
+  label,
+  rotation = 0,
+  zIndex = 10,
+  front = false,
+  onGrab,
+  children,
+}: {
+  className: string
+  label?: string
+  rotation?: number
+  zIndex?: number
+  /** Raise this piece above every other resting piece. */
+  front?: boolean
+  onGrab?: () => void
+  children: ReactNode
+}) {
+  const [offset, setOffset] = useState({ x: 0, y: 0 })
+  const [isDragging, setIsDragging] = useState(false)
+  const dragRef = useRef<DragSnapshot | null>(null)
+
+  const endDrag = (event: PointerEvent<HTMLDivElement>) => {
+    if (dragRef.current?.pointerId !== event.pointerId) return
+    dragRef.current = null
+    setIsDragging(false)
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+  }
+
+  const restingZ = front || isDragging ? 40 : zIndex
+
+  return (
+    <div
+      className={cn('absolute select-none touch-none cursor-grab active:cursor-grabbing', className)}
+      style={{
+        zIndex: restingZ,
+        transform: `translate3d(${offset.x}px, ${offset.y}px, 0) rotate(${rotation}deg)`,
+      }}
+      onPointerDown={(event) => {
+        if (event.button !== 0) return
+        onGrab?.()
+        dragRef.current = {
+          pointerId: event.pointerId,
+          startX: event.clientX,
+          startY: event.clientY,
+          offsetX: offset.x,
+          offsetY: offset.y,
+        }
+        setIsDragging(true)
+        event.currentTarget.setPointerCapture(event.pointerId)
+      }}
+      onPointerMove={(event) => {
+        if (dragRef.current?.pointerId !== event.pointerId) return
+        const deltaX = event.clientX - dragRef.current.startX
+        const deltaY = event.clientY - dragRef.current.startY
+        setOffset({
+          x: dragRef.current.offsetX + deltaX,
+          y: dragRef.current.offsetY + deltaY,
+        })
+      }}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+      onLostPointerCapture={() => {
+        dragRef.current = null
+        setIsDragging(false)
+      }}
+    >
+      {label ? <p className="mb-2 ui-sticker-label">{label}</p> : null}
+      <div className={cn(isDragging && 'ring-1 ring-brand/20')}>
+        {children}
+      </div>
+    </div>
+  )
+}
 
 export default function CanvasPane() {
+  const [frontKey, setFrontKey] = useState<string | null>(null)
+
+  const bringToFront = (key: string) => () => setFrontKey(key)
+
   return (
-    <section className="flex min-h-0 flex-col border-b border-line lg:border-b-0">
+    <section className="flex min-h-0 flex-col border-b border-line xl:border-b-0">
       <div className="border-b border-line bg-canvas px-4 py-2.5 md:px-6">
         <div className="motion-enter motion-step-2 flex items-center justify-between gap-4">
-          <p className="text-sm font-medium uppercase tracking-[0.14em] text-brand">
+          <p className="ui-sticker-label">
             Workspace · visual proof
           </p>
-          <p className="text-sm font-medium uppercase tracking-[0.14em] text-brand">
+          <p className="ui-label ui-label-muted">
             2 creative · 1 programming
           </p>
         </div>
       </div>
 
-      {/* Mobile — stacked feed (separate layout from the desktop collage) */}
-      <div className="space-y-6 px-4 py-6 md:hidden">
+      <div className="space-y-6 px-4 py-6 xl:hidden">
         <div className="motion-enter motion-step-3">
-          <p className={PILL_CLS}>bball · creative</p>
+          <p className="ui-sticker-label">bball · creative</p>
           <img
             src="/portofolio/bball.webp"
             alt="Basketball motion shot"
             loading="lazy"
-            className="mt-2 aspect-[4/3] w-full rounded-[14px] border border-line object-cover"
+            draggable={false}
+            className="mt-2 aspect-[4/3] w-full border border-line bg-canvas object-contain"
           />
         </div>
 
         <div className="motion-enter motion-step-3">
-          <p className={PILL_CLS}>flower · creative</p>
+          <p className="ui-sticker-label">flower · creative</p>
           <img
             src="/portofolio/flower.webp"
             alt="Pink flowers photo"
             loading="lazy"
-            className="mt-2 aspect-[4/3] w-full rounded-[14px] border border-line object-cover"
+            draggable={false}
+            className="mt-2 aspect-[4/3] w-full border border-line bg-canvas object-contain"
           />
         </div>
 
         <div className="motion-enter motion-step-4">
-          <p className={PILL_CLS}>novaris · programming</p>
-          <div className="mt-2 rounded-[14px] border border-line bg-paper p-2">
-            <img
-              src="/pics/Novaris.webp"
-              alt="Novaris project"
-              loading="lazy"
-              className="aspect-[16/9] w-full bg-paper object-contain"
-            />
-          </div>
+          <p className="ui-sticker-label">novaris · programming</p>
+          <img
+            src="/pics/Novaris.webp"
+            alt="Novaris project"
+            loading="lazy"
+            draggable={false}
+            className="mt-2 aspect-[16/9] w-full bg-canvas object-contain"
+          />
         </div>
 
-        <div className="motion-enter motion-step-4 overflow-hidden rounded-[14px] border border-line bg-paper">
-          <div className="flex items-center justify-between gap-4 border-b border-line bg-paper px-4 py-2.5 text-sm font-medium uppercase tracking-[0.14em] text-brand">
-            <span>Stack &amp; tools</span>
-            <span className="text-graphite">· ×</span>
-          </div>
-          <ul className="grid grid-cols-2 gap-x-4 gap-y-2 px-4 py-3.5">
-            {stackTools.map((item) => (
-              <li key={item} className="text-sm text-ink">
-                {item}
-              </li>
-            ))}
-          </ul>
+        <div className="motion-enter motion-step-4">
+          <StackToolsPanel />
         </div>
 
         <div className="motion-enter motion-step-5">
-          <p className={PILL_CLS}>dream garage</p>
+          <p className="ui-sticker-label">dream garage</p>
           <div className="mt-2 grid grid-cols-2 gap-3">
             <img
               src="/ls400.webp"
               alt="Lexus LS400 sticker"
               loading="lazy"
-              className="w-full rounded-[14px] border border-line object-contain"
+              draggable={false}
+              className="w-full object-contain"
             />
             <img
               src="/crown.webp"
               alt="Toyota Crown sticker"
               loading="lazy"
-              className="w-full rounded-[14px] border border-line object-contain"
+              draggable={false}
+              className="w-full object-contain"
             />
           </div>
         </div>
       </div>
 
-      {/* Desktop — collage */}
-      <div className="relative hidden min-h-0 flex-1 overflow-hidden px-6 py-6 md:block">
-        <p className="motion-enter motion-step-3 motion-ui absolute left-[8%] top-[10%] rounded-sm bg-paper px-2 py-1 text-sm font-medium uppercase tracking-[0.14em] text-brand ring-1 ring-line">
-          bball · creative
-        </p>
-        <img
-          src="/portofolio/bball.webp"
-          alt="Basketball motion shot"
-          loading="lazy"
-          data-hover="lift"
-          className="motion-enter motion-step-3 motion-ui-soft absolute left-[8%] top-[16%] h-[34%] w-[22%] object-cover"
-        />
+      <div className="relative hidden min-h-0 flex-1 overflow-hidden px-6 py-6 xl:block">
+        <DraggablePiece
+          className="left-[8%] top-[17%] w-[20%]"
+          label="bball · creative"
+          rotation={-4}
+          zIndex={12}
+          front={frontKey === 'bball'}
+          onGrab={bringToFront('bball')}
+        >
+          <img
+            src="/portofolio/bball.webp"
+            alt="Basketball motion shot"
+            loading="lazy"
+            draggable={false}
+            className="w-full bg-canvas object-contain"
+          />
+        </DraggablePiece>
 
-        <p className="motion-enter motion-step-3 motion-ui absolute left-[40%] top-[8%] rounded-sm bg-paper px-2 py-1 text-sm font-medium uppercase tracking-[0.14em] text-brand ring-1 ring-line">
-          flower · creative
-        </p>
-        <img
-          src="/portofolio/flower.webp"
-          alt="Pink flowers photo"
-          loading="lazy"
-          data-hover="lift"
-          className="motion-enter motion-step-3 motion-ui-soft absolute left-[40%] top-[14%] h-[30%] w-[22%] object-cover"
-        />
+        <DraggablePiece
+          className="left-[37%] top-[12%] w-[19%]"
+          label="flower · creative"
+          rotation={3}
+          zIndex={14}
+          front={frontKey === 'flower'}
+          onGrab={bringToFront('flower')}
+        >
+          <img
+            src="/portofolio/flower.webp"
+            alt="Pink flowers photo"
+            loading="lazy"
+            draggable={false}
+            className="w-full bg-canvas object-contain"
+          />
+        </DraggablePiece>
 
-        <p className="motion-enter motion-step-4 motion-ui absolute left-[16%] top-[38%] rounded-sm bg-paper px-2 py-1 text-sm font-medium uppercase tracking-[0.14em] text-brand ring-1 ring-line">
-          novaris · programming
-        </p>
-        <div
-          data-hover="lift"
-          className="motion-enter motion-step-4 motion-ui-soft absolute left-[16%] top-[44%] w-[46%] bg-paper p-2 ring-1 ring-line"
+        <DraggablePiece
+          className="left-[17%] top-[45%] w-[38%]"
+          label="novaris · programming"
+          rotation={-2}
+          zIndex={16}
+          front={frontKey === 'novaris'}
+          onGrab={bringToFront('novaris')}
         >
           <img
             src="/pics/Novaris.webp"
             alt="Novaris project"
             loading="lazy"
-            className="aspect-[16/9] w-full bg-paper object-contain"
+            draggable={false}
+            className="aspect-[16/9] w-full bg-canvas object-contain"
           />
-        </div>
+        </DraggablePiece>
 
-        <div className="motion-enter motion-step-4 motion-ui-soft absolute right-[4%] top-[10%] w-[30%] overflow-hidden rounded-[14px] border border-line bg-paper">
-          <div className="flex items-center justify-between gap-4 border-b border-line bg-paper px-4 py-2.5 text-sm font-medium uppercase tracking-[0.14em] text-brand">
-            <span>Stack &amp; tools</span>
-            <span className="text-graphite">· ×</span>
-          </div>
-          <ul className="grid grid-cols-2 gap-x-4 gap-y-2 px-4 py-3.5">
-            {stackTools.map((item) => (
-              <li key={item} className="text-sm text-ink">
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
+        <DraggablePiece
+          className="right-[6%] top-[10%] w-[26%]"
+          rotation={2}
+          zIndex={15}
+          front={frontKey === 'stack'}
+          onGrab={bringToFront('stack')}
+        >
+          <StackToolsPanel />
+        </DraggablePiece>
 
-        <div className="motion-enter motion-step-5 absolute bottom-[5%] right-[2%] w-[34%]">
-          <p className="mb-2 inline-block rounded-sm bg-paper px-2 py-1 text-sm font-medium uppercase tracking-[0.14em] text-brand ring-1 ring-line">
-            dream garage
-          </p>
-          <div className="relative h-[170px]">
-            <img
-              src="/ls400.webp"
-              alt="Lexus LS400 sticker"
-              loading="lazy"
-              data-hover="lift"
-              className="motion-ui-soft absolute bottom-[18%] left-0 w-[58%] -rotate-[6deg] object-contain"
-            />
-            <img
-              src="/crown.webp"
-              alt="Toyota Crown sticker"
-              loading="lazy"
-              data-hover="lift"
-              className="motion-ui-soft absolute bottom-0 right-0 w-[62%] rotate-[5deg] object-contain"
-            />
-          </div>
-        </div>
+        <DraggablePiece
+          className="right-[20%] bottom-[8%] w-[20%]"
+          label="LS400"
+          rotation={-6}
+          zIndex={12}
+          front={frontKey === 'ls400'}
+          onGrab={bringToFront('ls400')}
+        >
+          <img
+            src="/ls400.webp"
+            alt="Lexus LS400 sticker"
+            loading="lazy"
+            draggable={false}
+            className="w-full object-contain"
+          />
+        </DraggablePiece>
+
+        <DraggablePiece
+          className="right-[3%] bottom-[6%] w-[22%]"
+          label="Crown"
+          rotation={5}
+          zIndex={14}
+          front={frontKey === 'crown'}
+          onGrab={bringToFront('crown')}
+        >
+          <img
+            src="/crown.webp"
+            alt="Toyota Crown sticker"
+            loading="lazy"
+            draggable={false}
+            className="w-full object-contain"
+          />
+        </DraggablePiece>
       </div>
     </section>
   )

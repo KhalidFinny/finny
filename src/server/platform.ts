@@ -1,8 +1,6 @@
-import type { PlatformProxy } from 'wrangler'
-
 type RuntimeEnv = Env & { MEDIA?: R2Bucket }
 type WranglerModule = {
-  getPlatformProxy: () => Promise<PlatformProxy<RuntimeEnv>>
+  getPlatformProxy: () => Promise<{ env: RuntimeEnv }>
 }
 
 let platformPromise: Promise<RuntimeEnv> | null = null

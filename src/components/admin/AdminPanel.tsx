@@ -6,17 +6,25 @@ import ExperiencesTab from '@/components/admin/tabs/ExperiencesTab'
 import ProjectsTab from '@/components/admin/tabs/ProjectsTab'
 import SocialsTab from '@/components/admin/tabs/SocialsTab'
 import TechsTab from '@/components/admin/tabs/TechsTab'
+import Skeleton from '@/components/ui/Skeleton'
 import { TABS, type Draft, type Tab } from '@/components/admin/types'
 import { useAdminMutations } from '@/components/admin/useAdminMutations'
+import { sectionLabelCls } from '@/components/admin/styles'
 import { siteQueryOptions } from '@/lib/queries'
 
-export default function AdminPanel({ initialData }: { initialData: SiteData }) {
+export default function AdminPanel({
+  initialData,
+  adminKey,
+}: {
+  initialData: SiteData
+  adminKey: string
+}) {
   const { data, isLoading } = useQuery({ ...siteQueryOptions, initialData })
   const [tab, setTab] = useState<Tab>('Projects')
   const [draft, setDraft] = useState<Draft>(null)
   const [cvPath, setCvPath] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
-  const mutations = useAdminMutations(setNotice)
+  const mutations = useAdminMutations(adminKey, setNotice)
 
   useEffect(() => {
     if (data && cvPath === null) {
@@ -27,7 +35,14 @@ export default function AdminPanel({ initialData }: { initialData: SiteData }) {
   if (isLoading || !data) {
     return (
       <div className="min-h-screen bg-wall p-4 md:p-8 animate-[page-in_300ms_ease-out] motion-reduce:animate-none">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-graphite">Loading…</p>
+        <div className="mx-auto max-w-6xl space-y-6">
+          <Skeleton className="h-8 w-32" />
+          <Skeleton className="h-28 w-full" />
+          <div className="grid gap-4 md:grid-cols-2">
+            <Skeleton className="h-48 w-full" />
+            <Skeleton className="h-48 w-full" />
+          </div>
+        </div>
       </div>
     )
   }
@@ -41,12 +56,12 @@ export default function AdminPanel({ initialData }: { initialData: SiteData }) {
   return (
     <div className="page-grid min-h-screen bg-wall p-4 md:p-8 animate-[page-in_300ms_ease-out] motion-reduce:animate-none">
       <div className="mx-auto max-w-6xl">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-brand">Service bay</p>
+        <p className={sectionLabelCls}>Service bay</p>
         <div className="mt-2 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h1 className="font-serif text-4xl text-ink">Admin</h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-graphite">
-              Private content tooling for the portfolio. Projects now support staged image uploads, inline previews, explicit order controls, and a full reset path.
+              Private content tooling for the portfolio — projects, experiences, techs, socials, CV.
             </p>
           </div>
           <p className="font-mono text-xs uppercase tracking-[0.18em] text-graphite">
@@ -70,7 +85,7 @@ export default function AdminPanel({ initialData }: { initialData: SiteData }) {
                 setDraft(null)
               }}
               aria-pressed={tab === item}
-              className={`rounded-md px-3 py-1.5 text-sm font-medium uppercase tracking-[0.14em] transition-colors ${
+              className={`inline-flex min-h-9 items-center justify-center rounded-md px-4 font-mono text-xs uppercase tracking-[0.18em] transition-colors ${
                 tab === item ? 'bg-ink text-paper' : 'text-graphite hover:text-ink'
               }`}
             >

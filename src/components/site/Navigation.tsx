@@ -17,7 +17,7 @@ export default function Navigation() {
   }, [])
 
   const linkClass =
-    'font-mono text-xs uppercase tracking-[0.2em] text-graphite transition-colors duration-200 hover:text-brand md:text-sm'
+    'text-sm font-medium uppercase tracking-[0.14em] text-graphite transition-colors duration-200 hover:text-brand'
 
   return (
     <header className="fixed inset-x-0 top-2 z-40 px-2 md:top-4 md:px-8">

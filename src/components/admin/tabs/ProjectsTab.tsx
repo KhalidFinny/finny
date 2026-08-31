@@ -11,6 +11,7 @@ import {
   sectionLabelCls,
 } from '@/components/admin/styles'
 import { createEmptyProject } from '@/components/admin/utils'
+import { getProjectShots } from '@/lib/project-media'
 import Placeholder from '@/components/ui/Placeholder'
 
 interface ProjectsTabProps {
@@ -59,7 +60,6 @@ export default function ProjectsTab({
             <h2 className="mt-2 font-serif text-2xl text-ink">Portfolio control</h2>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-graphite">
               {orderedProjects.length} project{orderedProjects.length === 1 ? '' : 's'} in order.
-              Uploads are staged until you save, so canceling an edit will not orphan files.
             </p>
           </div>
           <div className="flex shrink-0 flex-wrap gap-3">
@@ -116,7 +116,7 @@ export default function ProjectsTab({
             <p className={sectionLabelCls}>Empty state</p>
             <h3 className="mt-2 font-serif text-2xl text-ink">No projects yet</h3>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-graphite">
-              Your portfolio is reset. Click the button above to add the first project.
+              Add the first project above.
             </p>
           </div>
         ) : (
@@ -143,9 +143,19 @@ export default function ProjectsTab({
 
                   <div className="space-y-4 p-4">
                     <div>
-                      <p className="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-graphite">
-                        {categoryById[project.category_id] ?? project.category_id}
-                      </p>
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="font-mono text-xs uppercase tracking-[0.18em] text-graphite">
+                          {categoryById[project.category_id] ?? project.category_id}
+                        </p>
+                        {(() => {
+                          const photoCount = getProjectShots(project).length
+                          return photoCount > 0 ? (
+                            <p className="shrink-0 font-mono text-xs uppercase tracking-[0.18em] text-graphite">
+                              {photoCount} photo{photoCount === 1 ? '' : 's'}
+                            </p>
+                          ) : null
+                        })()}
+                      </div>
                       <h3 className="mt-2 font-serif text-2xl leading-tight text-ink">
                         {project.title}
                       </h3>

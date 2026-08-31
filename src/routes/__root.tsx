@@ -3,6 +3,8 @@
 import { Link, createRootRoute, HeadContent, Outlet, Scripts } from '@tanstack/react-router'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { useCallback, useState } from 'react'
+import WindowHeader from '@/components/wireframe/home/WindowHeader'
+import { navItems } from '@/components/wireframe/home/data'
 import { queryClient } from '@/lib/queryClient'
 import BootScreen from '@/components/site/BootScreen'
 import '@/styles.css'
@@ -55,13 +57,24 @@ function RootComponent() {
 
 function RootNotFound() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-wall px-6 text-center text-ink">
-      <div>
-        <p className="text-sm font-medium uppercase tracking-[0.14em] text-brand">Not found</p>
-        <h1 className="mt-4 font-serif text-4xl leading-tight">This route does not exist.</h1>
-        <Link to="/" className="mt-6 inline-block rounded-md bg-brand px-4 py-2 text-sm font-medium uppercase tracking-[0.14em] text-paper">
-          Back home
-        </Link>
+    <div className="h-dvh bg-wall p-1.5 md:p-3">
+      <div className="mx-auto flex h-full max-w-[1760px] flex-col overflow-hidden rounded-[18px] border border-line bg-paper page-grid">
+        <WindowHeader items={navItems} />
+        <main className="flex min-h-0 flex-1 flex-col items-center justify-center px-6 text-center">
+          <p className="ui-sticker-label">404 · Route not found</p>
+          <h1 className="mt-5 font-serif text-[clamp(2.5rem,6vw,4.5rem)] leading-[0.9] tracking-[-0.03em] text-ink [text-wrap:balance]">
+            This road is closed.
+          </h1>
+          <p className="mt-4 max-w-[42ch] text-base leading-relaxed text-graphite">
+            The machine is running fine — this route just isn&apos;t on the map.
+          </p>
+          <Link
+            to="/"
+            className="mt-7 inline-flex min-h-11 items-center justify-center rounded-full border border-ink px-6 text-sm font-medium uppercase tracking-[0.14em] text-ink transition-colors duration-200 hover:bg-ink hover:text-canvas"
+          >
+            Back to the garage
+          </Link>
+        </main>
       </div>
     </div>
   )

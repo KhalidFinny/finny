@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from '@tanstack/react-router'
+import { useLocation, useNavigate, useRouter } from '@tanstack/react-router'
 import { faGithub, faInstagram, faLinkedinIn } from '@fortawesome/free-brands-svg-icons'
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
 import type { NavPath } from '@/components/wireframe/home/data'
@@ -13,6 +13,7 @@ export default function WindowHeader({
   cvHref?: string
 }) {
   const navigate = useNavigate()
+  const router = useRouter()
   const { pathname } = useLocation()
 
   const go = (to: NavPath) =>
@@ -20,8 +21,12 @@ export default function WindowHeader({
       void navigate({ to })
     })
 
+  const prefetch = (to: NavPath) => {
+    void router.prefetchRoute({ to })
+  }
+
   return (
-    <header className="flex shrink-0 items-center gap-2 border-b border-line bg-brand px-3 py-2 md:gap-3 md:px-6">
+    <header className="flex shrink-0 flex-wrap items-center gap-2 border-b border-line bg-brand px-4 py-2.5 md:gap-3 md:px-6">
       <a
         href="/"
         aria-label="Khalid Atthoriq"
@@ -43,14 +48,14 @@ export default function WindowHeader({
         href={cvHref ?? '/CV%20-%20Muhammad%20Khalid%20Atthoriq.pdf'}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-full border border-canvas/80 px-3 py-1.5 font-mono text-xs uppercase tracking-[0.2em] text-canvas transition-colors duration-200 hover:bg-canvas hover:text-brand md:px-4 md:text-sm"
+        className="order-2 inline-flex min-h-9 shrink-0 items-center justify-center rounded-full border border-canvas/80 px-3 py-1.5 text-sm font-medium uppercase tracking-[0.14em] text-canvas transition-colors duration-200 hover:bg-canvas hover:text-brand md:px-4"
       >
         View my CV
       </a>
 
       <nav
         aria-label="Primary"
-        className="ml-auto flex min-w-0 items-center gap-1 overflow-x-auto md:gap-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="order-3 flex basis-full min-w-0 items-center gap-1 overflow-x-auto pt-1 md:gap-2 lg:order-none lg:ml-auto lg:basis-auto lg:pt-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {items.map((item) => {
           const active = pathname === item.to
@@ -58,14 +63,15 @@ export default function WindowHeader({
             <a
               key={item.to}
               href={item.to}
+              onMouseEnter={() => prefetch(item.to)}
               onClick={(e) => {
                 if (!active) {
                   e.preventDefault()
                   go(item.to)
                 }
               }}
-              className={`motion-ui inline-flex min-h-9 shrink-0 items-center whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-medium uppercase tracking-[0.14em] md:text-sm ${
-                active ? 'bg-paper' : 'text-canvas/90'
+              className={`inline-flex min-h-9 shrink-0 items-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium uppercase tracking-[0.14em] transition-colors duration-200 ${
+                active ? 'bg-paper' : 'text-canvas/90 hover:text-canvas'
               }`}
               style={active ? { color: 'var(--color-brand)' } : undefined}
             >
@@ -75,7 +81,7 @@ export default function WindowHeader({
         })}
       </nav>
 
-      <div className="hidden shrink-0 items-center gap-1.5 md:flex">
+      <div className="ml-auto hidden shrink-0 items-center gap-1.5 xl:flex">
         <a
           href="https://instagram.com/finnn.designs"
           target="_blank"

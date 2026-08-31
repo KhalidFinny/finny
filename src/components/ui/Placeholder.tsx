@@ -13,7 +13,7 @@ export default function Placeholder({
       aria-label={`${label} — image placeholder`}
       className={cn('flex items-center justify-center bg-paper', className)}
     >
-      <span className="text-sm uppercase tracking-[0.2em] text-mist">{label}</span>
+      <span className="ui-label ui-label-muted">{label}</span>
     </div>
   )
 }

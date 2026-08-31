@@ -23,8 +23,9 @@ export default defineConfig({
   },
   optimizeDeps: {
     // wrangler (via the dev platform proxy) is a Node CLI — prebundling it
-    // trips over broken ESM entries (blake3-wasm). It's only imported
-    // server-side, so it never needs client optimization.
+    // trips over the blake3-wasm@2.1.5 broken ESM entry. It's only imported
+    // server-side, so it never needs client optimization. The package entry
+    // itself is fixed by scripts/patch-blake3-esm.sh on install.
     exclude: ['wrangler', 'blake3-wasm'],
   },
 })

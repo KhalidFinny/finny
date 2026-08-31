@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
-const MIN_BOOT_MS = 1100
-const REDUCED_BOOT_MS = 600
+const MIN_BOOT_MS = 500
+const REDUCED_BOOT_MS = 300
 const FADE_MS = 250
 
 // Gauge geometry (viewBox 240×140, hub at bottom-center)
@@ -127,7 +127,7 @@ export default function BootScreen({ onDone }: { onDone: () => void }) {
     >
       <div className="w-full max-w-md px-6">
         {/* Model designation + lamp */}
-        <div className="flex items-baseline justify-between font-mono text-xs uppercase tracking-[0.25em] text-graphite md:text-sm">
+        <div className="flex items-baseline justify-between text-sm font-medium uppercase tracking-[0.14em] text-graphite">
           <p>The Lab</p>
           <p className="flex items-center gap-2">
             <span
@@ -147,7 +147,7 @@ export default function BootScreen({ onDone }: { onDone: () => void }) {
         <BootGauge />
 
         {/* Trip computer — self-test sequence */}
-        <ul className="mt-7 space-y-1.5 font-mono text-xs uppercase tracking-[0.2em] text-graphite md:text-sm">
+        <ul className="mt-7 space-y-1.5 text-sm font-medium uppercase tracking-[0.14em] text-graphite">
           <li className="boot-check flex items-center gap-2.5">
             <span aria-hidden="true" className="h-1 w-1 shrink-0 bg-rosso" />
             Ignition — on

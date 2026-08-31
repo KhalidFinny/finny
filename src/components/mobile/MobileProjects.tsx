@@ -23,15 +23,19 @@ export default function MobileProjects({ projects }: { projects: Project[] }) {
                   <p className="mt-1 text-sm font-medium text-graphite">
                     {project.role || 'Lead developer'}
                   </p>
-                  <p className="mt-3 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-graphite">
+                  <p className="mt-3 flex items-center gap-x-3 gap-y-1 text-sm font-medium uppercase tracking-[0.14em] text-graphite">
                     <span
-                      aria-hidden="true"
-                      className={`h-1.5 w-1.5 rounded-full ${isOngoing ? 'bg-rosso' : 'bg-deep-line'}`}
-                    />
-                    {isOngoing ? 'Ongoing' : 'Done'}
-                    <span aria-hidden="true">·</span>
+                      className={`inline-flex items-center gap-1.5 ${isOngoing ? 'text-graphite' : 'text-brand'}`}
+                    >
+                      <span
+                        aria-hidden="true"
+                        className={`h-1 w-1 rounded-full ${isOngoing ? 'bg-deep-line' : 'bg-rosso'}`}
+                      />
+                      {isOngoing ? 'Ongoing' : 'Done'}
+                    </span>
+                    <span aria-hidden="true" className="h-1 w-1 rounded-full bg-rosso" />
                     {project.year || '—'}
-                    <span aria-hidden="true">·</span>
+                    <span aria-hidden="true" className="h-1 w-1 rounded-full bg-rosso" />
                     <span className="min-w-0 truncate">{project.stack || '—'}</span>
                   </p>
                   {project.link ? (
@@ -39,7 +43,7 @@ export default function MobileProjects({ projects }: { projects: Project[] }) {
                       href={project.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-4 inline-flex min-h-10 items-center justify-center rounded-full border border-ink px-5 py-2 font-mono text-xs uppercase tracking-[0.2em] text-ink transition-colors duration-200 hover:bg-ink hover:text-canvas"
+                      className="mt-4 inline-flex min-h-11 items-center justify-center rounded-full border border-ink px-5 py-2 text-sm font-medium uppercase tracking-[0.14em] text-ink transition-colors duration-200 hover:bg-ink hover:text-canvas"
                     >
                       Visit site
                     </a>

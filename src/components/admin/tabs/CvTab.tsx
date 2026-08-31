@@ -25,7 +25,7 @@ export default function CvTab({ cvPath, mutations, setCvPath }: CvTabProps) {
         <input className={inputCls} value={cvPath ?? ''} onChange={(event) => setCvPath(event.target.value)} required />
       </Field>
       <p className="text-sm leading-relaxed text-graphite">
-        Served from the public/ directory — drop the file there and store the final path here.
+        Stored in public/ — drop the file there, save this path.
       </p>
       <button type="submit" disabled={mutations.saveCvPathMutation.isPending} className={primaryBtn}>
         {mutations.saveCvPathMutation.isPending ? 'Saving…' : 'Save'}

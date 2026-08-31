@@ -56,14 +56,15 @@ export default function Lightbox({
             allowFullScreen
           />
         )}
-        <div className="flex justify-end py-1">
+        <div className="flex justify-end pb-1 pt-2">
           <button
             ref={closeRef}
             type="button"
             onClick={onClose}
-            className="text-sm font-medium text-graphite transition-colors duration-200 hover:text-ink"
+            aria-label={`Close ${mediaLabel}`}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-line bg-paper text-graphite transition-colors duration-200 hover:border-ink hover:text-ink"
           >
-            × close
+            ×
           </button>
         </div>
       </div>

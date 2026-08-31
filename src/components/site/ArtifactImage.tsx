@@ -14,7 +14,7 @@ export default function ArtifactImage({
   if (failed) {
     return (
       <div className="flex h-full w-full items-center justify-center border border-line bg-paper">
-        <span className="font-mono text-sm text-mist">artifact missing</span>
+        <span className="text-sm font-medium text-graphite">artifact missing</span>
       </div>
     )
   }

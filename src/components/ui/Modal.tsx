@@ -75,7 +75,9 @@ export default function Modal({
       >
         <div className="flex items-start justify-between gap-4 border-b border-line px-5 py-4 md:px-6">
           <div>
-            <p className="font-mono text-xs uppercase tracking-[0.2em] text-brand">{subtitle}</p>
+            {subtitle ? (
+              <p className="font-mono text-xs uppercase tracking-[0.18em] text-brand">{subtitle}</p>
+            ) : null}
             <h2 className="mt-1 font-serif text-2xl text-ink">{title}</h2>
           </div>
           <button
