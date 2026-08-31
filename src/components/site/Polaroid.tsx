@@ -41,6 +41,7 @@ export default function Polaroid({
   overlay,
   lazy = true,
   className,
+  photoClassName,
 }: PolaroidProps) {
   const [failed, setFailed] = useState(false)
   const rotationClass = rotation ?? (index !== undefined ? COVER_ROTATIONS[index % COVER_ROTATIONS.length] : undefined)

@@ -70,7 +70,7 @@ export default function ProjectsTab({
                 setDraft({
                   kind: 'project',
                   isNew: true,
-                  item: { ...createEmptyProject(orderedProjects.length), category_id: 'programming' },
+                  item: createEmptyProject(orderedProjects, 'programming'),
                 })
               }
             >
@@ -83,7 +83,7 @@ export default function ProjectsTab({
                 setDraft({
                   kind: 'project',
                   isNew: true,
-                  item: { ...createEmptyProject(orderedProjects.length), category_id: 'ui-ux' },
+                  item: createEmptyProject(orderedProjects, 'ui-ux'),
                 })
               }
             >
@@ -252,6 +252,8 @@ export default function ProjectsTab({
           <ProjectForm
             key={draft.item.id}
             initial={draft.item}
+            isNew={draft.isNew}
+            projects={orderedProjects}
             categories={categories}
             techs={techs}
             isSaving={

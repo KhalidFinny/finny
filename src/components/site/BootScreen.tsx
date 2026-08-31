@@ -102,7 +102,7 @@ export default function BootScreen({ onDone }: { onDone: () => void }) {
     return () => {
       disposed = true
       window.clearTimeout(minTimer)
-      window.removeEventListener('load', onReady)
+      window.removeEventListener('load', finish)
     }
   }, [onDone])
 

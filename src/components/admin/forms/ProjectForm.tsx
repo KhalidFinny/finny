@@ -9,7 +9,7 @@ import Field from '@/components/admin/Field'
 import TagInput from '@/components/admin/TagInput'
 import TechSelect from '@/components/admin/TechSelect'
 import { ghostBtn, inputCls, labelCls, panelCls, primaryBtn } from '@/components/admin/styles'
-import { jsonToBullets, readFileAsDataUrl, splitLines } from '@/components/admin/utils'
+import { createProjectId, jsonToBullets, readFileAsDataUrl, splitLines } from '@/components/admin/utils'
 import Placeholder from '@/components/ui/Placeholder'
 
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024
@@ -30,6 +30,8 @@ const ROLE_SUGGESTIONS = [
 
 interface ProjectFormProps {
   initial: Project
+  isNew: boolean
+  projects: Pick<Project, 'category_id'>[]
   categories: Category[]
   techs: string[]
   isSaving: boolean
@@ -112,6 +114,8 @@ function MediaDropzone({
 
 export default function ProjectForm({
   initial,
+  isNew,
+  projects,
   categories,
   techs,
   isSaving,
@@ -152,15 +156,21 @@ export default function ProjectForm({
   const convertToWebp = async (file: File): Promise<File> => {
     try {
       const bitmap = await createImageBitmap(file)
+      // Cap the longest edge at 1600px — the site never displays beyond
+      // ~735px (2x retina ≈ 1470px). Full-res webp q85 is 2-8MB per photo;
+      // at 1600w the same encode is 150-400KB, so 10+ gallery uploads stop
+      // saturating the connection and R2.
+      const MAX_DIMENSION = 1600
+      const scale = Math.min(1, MAX_DIMENSION / Math.max(bitmap.width, bitmap.height))
       const canvas = document.createElement('canvas')
-      canvas.width = bitmap.width
-      canvas.height = bitmap.height
+      canvas.width = Math.max(1, Math.round(bitmap.width * scale))
+      canvas.height = Math.max(1, Math.round(bitmap.height * scale))
       const context = canvas.getContext('2d')
       if (!context) {
         bitmap.close()
         return file
       }
-      context.drawImage(bitmap, 0, 0)
+      context.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
       bitmap.close()
 
       const { promise, resolve } = Promise.withResolvers<Blob | null>()
@@ -287,7 +297,11 @@ export default function ProjectForm({
       <select
         className={inputCls}
         value={form.category_id}
-        onChange={(event) => set('category_id', event.target.value)}
+        onChange={(event) => {
+          const nextCategory = event.target.value
+          set('category_id', nextCategory)
+          if (isNew) set('id', createProjectId(projects, nextCategory))
+        }}
       >
         {categories.map((category) => (
           <option key={category.id} value={category.id}>
@@ -438,7 +452,19 @@ export default function ProjectForm({
       {/* Header row */}
       <div className="grid gap-3 md:grid-cols-3">
         <Field label="Id">
-          <input className={inputCls} value={form.id} onChange={(event) => set('id', event.target.value)} required />
+          <input
+            className={inputCls}
+            value={form.id}
+            readOnly={isNew}
+            title={isNew ? 'Auto-generated from the category' : undefined}
+            onChange={(event) => set('id', event.target.value)}
+            required
+          />
+          {isNew ? (
+            <p className="mt-1 text-xs font-medium uppercase tracking-[0.14em] text-mist">
+              Auto — {form.id}
+            </p>
+          ) : null}
         </Field>
         {categoryField}
         {statusField}

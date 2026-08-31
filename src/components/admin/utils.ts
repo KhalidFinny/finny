@@ -46,10 +46,30 @@ export async function readFileAsDataUrl(file: File): Promise<string> {
   return await promise
 }
 
-export function createEmptyProject(count: number): Project {
+const PROJECT_ID_PREFIX: Record<string, string> = {
+  programming: 'prog',
+  'ui-ux': 'ui',
+  videography: 'vid',
+  photography: 'photo',
+}
+
+/** Next project id for a category — per-category sequence, e.g. prog4 / ui6. */
+export function createProjectId(
+  projects: Pick<Project, 'category_id'>[],
+  categoryId: string,
+): string {
+  const prefix = PROJECT_ID_PREFIX[categoryId] ?? categoryId
+  const count = projects.filter((project) => project.category_id === categoryId).length
+  return `${prefix}${count + 1}`
+}
+
+export function createEmptyProject(
+  projects: Pick<Project, 'category_id'>[],
+  categoryId: string,
+): Project {
   return {
-    id: `prog${count + 1}`,
-    category_id: 'programming',
+    id: createProjectId(projects, categoryId),
+    category_id: categoryId,
     title: '',
     role: '',
     stack: '',
@@ -63,7 +83,7 @@ export function createEmptyProject(count: number): Project {
     link: null,
     source_link: null,
     gallery: null,
-    sort_order: count,
+    sort_order: projects.length,
   }
 }
 
