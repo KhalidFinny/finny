@@ -38,6 +38,25 @@ function RootComponent() {
           href="/fonts/instrumentserif-regular.woff2"
           crossOrigin="anonymous"
         />
+        <link
+          rel="preload"
+          as="font"
+          type="font/woff2"
+          href="/fonts/instrumentserif-italic.woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          as="font"
+          type="font/woff2"
+          href="/fonts/ibmplexmono-regular.woff2"
+          crossOrigin="anonymous"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: "document.documentElement.classList.add('js')",
+          }}
+        />
         <link rel="icon" type="image/webp" href="/icons/logo.webp" />
         <title>Khalid Atthoriq</title>
         <meta name="description" content="Portfolio of Khalid Atthoriq — Fullstack Developer & UI/UX Designer." />

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 
-const MIN_BOOT_MS = 500
-const REDUCED_BOOT_MS = 300
-const FADE_MS = 250
+const MIN_BOOT_MS = 300
+const REDUCED_BOOT_MS = 200
+const FADE_MS = 200
 
 // Gauge geometry (viewBox 240×140, hub at bottom-center)
 const CX = 120
@@ -15,9 +15,8 @@ function polar(r: number, v: number) {
 }
 
 function BootGauge() {
-  const trackLen = Math.PI * R
-  const redlineLen = trackLen * 0.15
   const trackPath = `M ${polar(R, 0).x} ${polar(R, 0).y} A ${R} ${R} 0 0 1 ${polar(R, 100).x} ${polar(R, 100).y}`
+  const redlinePath = `M ${polar(R, 85).x} ${polar(R, 85).y} A ${R} ${R} 0 0 1 ${polar(R, 100).x} ${polar(R, 100).y}`
   const majors = Array.from({ length: 11 }, (_, i) => i * 10)
   const minors = Array.from({ length: 19 }, (_, i) => 5 + i * 5)
 
@@ -29,15 +28,8 @@ function BootGauge() {
     >
       {/* Track */}
       <path d={trackPath} fill="none" stroke="var(--color-line)" strokeWidth="2" />
-      {/* Redline — last 15% of the sweep */}
-      <path
-        d={trackPath}
-        fill="none"
-        stroke="var(--color-rosso)"
-        strokeWidth="2"
-        strokeDasharray={`${redlineLen} ${trackLen}`}
-        strokeDashoffset={trackLen - redlineLen}
-      />
+      {/* Redline — high-rpm end (85–100), past the needle's idle at 70 */}
+      <path d={redlinePath} fill="none" stroke="var(--color-rosso)" strokeWidth="2" />
       {majors.map((v) => {
         const outer = polar(100, v)
         const inner = polar(88, v)
@@ -102,13 +94,11 @@ export default function BootScreen({ onDone }: { onDone: () => void }) {
     }
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const minTimer = window.setTimeout(finish, reduce ? REDUCED_BOOT_MS : MIN_BOOT_MS)
-    const onReady = () => {
-      const fonts = document.fonts?.ready
-      if (fonts) fonts.then(finish).catch(finish)
-      else finish()
-    }
-    if (document.readyState === 'complete') onReady()
-    else window.addEventListener('load', onReady, { once: true })
+    // Hide as soon as the page's resources have loaded — fonts use
+    // font-display: swap, so waiting for document.fonts.ready only delays
+    // first paint when a font is slow or missing.
+    if (document.readyState === 'complete') finish()
+    else window.addEventListener('load', finish, { once: true })
     return () => {
       disposed = true
       window.clearTimeout(minTimer)

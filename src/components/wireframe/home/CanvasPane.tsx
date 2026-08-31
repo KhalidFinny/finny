@@ -150,6 +150,10 @@ export default function CanvasPane() {
           <img
             src="/portofolio/bball.webp"
             alt="Basketball motion shot"
+            width={800}
+            height={800}
+            srcSet="/portofolio/bball-400.webp 400w, /portofolio/bball.webp 800w"
+            sizes="92vw"
             loading="lazy"
             draggable={false}
             className="mt-2 aspect-[4/3] w-full border border-line bg-canvas object-contain"
@@ -161,6 +165,10 @@ export default function CanvasPane() {
           <img
             src="/portofolio/flower.webp"
             alt="Pink flowers photo"
+            width={800}
+            height={1067}
+            srcSet="/portofolio/flower-400.webp 400w, /portofolio/flower.webp 800w"
+            sizes="92vw"
             loading="lazy"
             draggable={false}
             className="mt-2 aspect-[4/3] w-full border border-line bg-canvas object-contain"
@@ -172,7 +180,11 @@ export default function CanvasPane() {
           <img
             src="/pics/Novaris.webp"
             alt="Novaris project"
-            loading="lazy"
+            width={800}
+            height={429}
+            srcSet="/pics/Novaris.webp 800w, /pics/Novaris-1600.webp 1600w"
+            sizes="92vw"
+            fetchPriority="high"
             draggable={false}
             className="mt-2 aspect-[16/9] w-full bg-canvas object-contain"
           />
@@ -188,6 +200,10 @@ export default function CanvasPane() {
             <img
               src="/ls400.webp"
               alt="Lexus LS400 sticker"
+              width={800}
+              height={541}
+              srcSet="/ls400-400.webp 400w, /ls400.webp 800w"
+              sizes="46vw"
               loading="lazy"
               draggable={false}
               className="w-full object-contain"
@@ -195,6 +211,10 @@ export default function CanvasPane() {
             <img
               src="/crown.webp"
               alt="Toyota Crown sticker"
+              width={800}
+              height={541}
+              srcSet="/crown-400.webp 400w, /crown.webp 800w"
+              sizes="46vw"
               loading="lazy"
               draggable={false}
               className="w-full object-contain"
@@ -203,7 +223,7 @@ export default function CanvasPane() {
         </div>
       </div>
 
-      <div className="relative hidden min-h-0 flex-1 overflow-hidden px-6 py-6 xl:block">
+      <div className="relative hidden min-h-[26rem] flex-1 overflow-hidden px-6 py-6 xl:block">
         <DraggablePiece
           className="left-[8%] top-[17%] w-[20%]"
           label="bball · creative"
@@ -215,7 +235,12 @@ export default function CanvasPane() {
           <img
             src="/portofolio/bball.webp"
             alt="Basketball motion shot"
+            width={800}
+            height={800}
+            srcSet="/portofolio/bball-400.webp 400w, /portofolio/bball.webp 800w"
+            sizes="20vw"
             loading="lazy"
+            decoding="async"
             draggable={false}
             className="w-full bg-canvas object-contain"
           />
@@ -232,7 +257,12 @@ export default function CanvasPane() {
           <img
             src="/portofolio/flower.webp"
             alt="Pink flowers photo"
+            width={800}
+            height={1067}
+            srcSet="/portofolio/flower-400.webp 400w, /portofolio/flower.webp 800w"
+            sizes="19vw"
             loading="lazy"
+            decoding="async"
             draggable={false}
             className="w-full bg-canvas object-contain"
           />
@@ -249,7 +279,12 @@ export default function CanvasPane() {
           <img
             src="/pics/Novaris.webp"
             alt="Novaris project"
-            loading="lazy"
+            width={800}
+            height={429}
+            srcSet="/pics/Novaris.webp 800w, /pics/Novaris-1600.webp 1600w"
+            sizes="38vw"
+            fetchPriority="high"
+            decoding="async"
             draggable={false}
             className="aspect-[16/9] w-full bg-canvas object-contain"
           />
@@ -276,7 +311,12 @@ export default function CanvasPane() {
           <img
             src="/ls400.webp"
             alt="Lexus LS400 sticker"
+            width={800}
+            height={541}
+            srcSet="/ls400-400.webp 400w, /ls400.webp 800w"
+            sizes="20vw"
             loading="lazy"
+            decoding="async"
             draggable={false}
             className="w-full object-contain"
           />
@@ -293,7 +333,12 @@ export default function CanvasPane() {
           <img
             src="/crown.webp"
             alt="Toyota Crown sticker"
+            width={800}
+            height={541}
+            srcSet="/crown-400.webp 400w, /crown.webp 800w"
+            sizes="22vw"
             loading="lazy"
+            decoding="async"
             draggable={false}
             className="w-full object-contain"
           />

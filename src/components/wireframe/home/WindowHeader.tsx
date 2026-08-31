@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useRouter } from '@tanstack/react-router'
+import { useLocation, useNavigate } from '@tanstack/react-router'
 import { faGithub, faInstagram, faLinkedinIn } from '@fortawesome/free-brands-svg-icons'
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
 import type { NavPath } from '@/components/wireframe/home/data'
@@ -13,17 +13,12 @@ export default function WindowHeader({
   cvHref?: string
 }) {
   const navigate = useNavigate()
-  const router = useRouter()
   const { pathname } = useLocation()
 
   const go = (to: NavPath) =>
     animateOutThen(() => {
       void navigate({ to })
     })
-
-  const prefetch = (to: NavPath) => {
-    void router.prefetchRoute({ to })
-  }
 
   return (
     <header className="flex shrink-0 flex-wrap items-center gap-2 border-b border-line bg-brand px-4 py-2.5 md:gap-3 md:px-6">
@@ -63,7 +58,6 @@ export default function WindowHeader({
             <a
               key={item.to}
               href={item.to}
-              onMouseEnter={() => prefetch(item.to)}
               onClick={(e) => {
                 if (!active) {
                   e.preventDefault()

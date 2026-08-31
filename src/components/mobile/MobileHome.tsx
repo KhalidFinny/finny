@@ -39,6 +39,10 @@ export default function MobileHome() {
             <img
               src="/portofolio/bball.webp"
               alt="Basketball motion shot"
+              width={800}
+              height={800}
+              srcSet="/portofolio/bball-400.webp 400w, /portofolio/bball.webp 800w"
+              sizes="92vw"
               loading="lazy"
               className="mt-2 aspect-[4/3] w-full border border-line object-cover"
             />
@@ -50,6 +54,10 @@ export default function MobileHome() {
             <img
               src="/portofolio/flower.webp"
               alt="Pink flowers photo"
+              width={800}
+              height={1067}
+              srcSet="/portofolio/flower-400.webp 400w, /portofolio/flower.webp 800w"
+              sizes="92vw"
               loading="lazy"
               className="mt-2 aspect-[4/3] w-full border border-line object-cover"
             />
@@ -61,6 +69,10 @@ export default function MobileHome() {
             <img
               src="/pics/Novaris.webp"
               alt="Novaris project"
+              width={800}
+              height={429}
+              srcSet="/pics/Novaris.webp 800w, /pics/Novaris-1600.webp 1600w"
+              sizes="92vw"
               loading="lazy"
               className="mt-2 aspect-[16/9] w-full object-contain"
             />

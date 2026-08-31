@@ -1,4 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
+import { getRuntimeEnv } from '@/server/platform'
 
 const GITHUB_USER = 'khalidfinny'
 const HEADERS = { 'User-Agent': 'finny-portfolio' }
@@ -44,14 +45,25 @@ async function getDb() {
   }
 }
 
+// The Workers egress IP is shared across tenants, so unauthenticated GitHub
+// API calls hit the 60 req/hr per-IP limit almost immediately. When the
+// GITHUB_TOKEN secret is present (wrangler secret put), send it as a Bearer
+// token for the 5000 req/hr authenticated quota.
+async function getAuthHeaders(): Promise<Record<string, string>> {
+  const env = await getRuntimeEnv()
+  const token = env?.GITHUB_TOKEN ?? env?.GH_TOKEN
+  return token ? { ...HEADERS, Authorization: `Bearer ${token}` } : HEADERS
+}
+
 async function fetchStats(): Promise<GitHubStats> {
+  const headers = await getAuthHeaders()
   const [userRes, reposRes, contribRes] = await Promise.all([
-    fetch(`https://api.github.com/users/${GITHUB_USER}`, { headers: HEADERS }),
+    fetch(`https://api.github.com/users/${GITHUB_USER}`, { headers }),
     fetch(
       `https://api.github.com/users/${GITHUB_USER}/repos?per_page=100&sort=updated`,
-      { headers: HEADERS },
+      { headers },
     ),
-    fetch(`https://github.com/users/${GITHUB_USER}/contributions`, { headers: HEADERS }),
+    fetch(`https://github.com/users/${GITHUB_USER}/contributions`, { headers }),
   ])
 
   if (!userRes.ok) throw new Error('GitHub user fetch failed')
@@ -153,49 +165,63 @@ export const getGitHubStats = createServerFn({ method: 'GET' }).handler(
     let lockHeld = false
 
     if (db) {
-      const row = await db
-        .prepare('SELECT value, expires_at FROM cache WHERE key = ?')
-        .bind(CACHE_KEY)
-        .first<{ value: string; expires_at: number }>()
+      try {
+        const row = await db
+          .prepare('SELECT value, expires_at FROM cache WHERE key = ?')
+          .bind(CACHE_KEY)
+          .first<{ value: string; expires_at: number }>()
 
-      if (row) {
-        try {
-          cachedStats = JSON.parse(row.value) as GitHubStats
-        } catch {
-          cachedStats = null
+        if (row) {
+          try {
+            cachedStats = JSON.parse(row.value) as GitHubStats
+          } catch {
+            cachedStats = null
+          }
+          if (cachedStats && row.expires_at > Date.now()) {
+            return cachedStats
+          }
         }
-        if (cachedStats && row.expires_at > Date.now()) {
+
+        // Atomic lock: only the request that wins the insert fetches and stores.
+        const lock = await db
+          .prepare('INSERT OR IGNORE INTO cache (key, value, expires_at) VALUES (?, ?, ?)')
+          .bind(`${CACHE_KEY}:lock`, '1', Date.now() + LOCK_TTL)
+          .run()
+        lockHeld = lock.meta.changes === 1
+
+        if (!lockHeld && cachedStats) {
+          // Another request is refreshing — serve stale instead of stampeding GitHub.
           return cachedStats
         }
-      }
-
-      // Atomic lock: only the request that wins the insert fetches and stores.
-      const lock = await db
-        .prepare('INSERT OR IGNORE INTO cache (key, value, expires_at) VALUES (?, ?, ?)')
-        .bind(`${CACHE_KEY}:lock`, '1', Date.now() + LOCK_TTL)
-        .run()
-      lockHeld = lock.meta.changes === 1
-
-      if (!lockHeld && cachedStats) {
-        // Another request is refreshing — serve stale instead of stampeding GitHub.
-        return cachedStats
+      } catch {
+        // Cache unavailable (e.g. migrations not applied) — fetch live below.
+        lockHeld = false
       }
     }
 
     try {
       const stats = await fetchStats()
       if (db) {
-        await db
-          .prepare('INSERT OR REPLACE INTO cache (key, value, expires_at) VALUES (?, ?, ?)')
-          .bind(CACHE_KEY, JSON.stringify(stats), Date.now() + CACHE_TTL)
-          .run()
+        try {
+          await db
+            .prepare('INSERT OR REPLACE INTO cache (key, value, expires_at) VALUES (?, ?, ?)')
+            .bind(CACHE_KEY, JSON.stringify(stats), Date.now() + CACHE_TTL)
+            .run()
+        } catch {
+          // Cache write failed — still serve the fresh stats.
+        }
       }
       return stats
-    } catch {
+    } catch (error) {
+      console.error('[github] stats fetch failed', error)
       return cachedStats
     } finally {
       if (db && lockHeld) {
-        await db.prepare('DELETE FROM cache WHERE key = ?').bind(`${CACHE_KEY}:lock`).run()
+        try {
+          await db.prepare('DELETE FROM cache WHERE key = ?').bind(`${CACHE_KEY}:lock`).run()
+        } catch {
+          // Lock cleanup is best-effort — it expires on its own via LOCK_TTL.
+        }
       }
     }
   },

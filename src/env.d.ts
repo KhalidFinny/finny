@@ -6,13 +6,21 @@
 interface Env {
   WORKER_SECRET?: string
   LASTFM_API_KEY?: string
+  LASTFM_KEY?: string
   LASTFM_USER?: string
+  LASTFM_USERNAME?: string
+  GITHUB_TOKEN?: string
+  GH_TOKEN?: string
 }
 
 declare namespace Cloudflare {
   interface Env {
     WORKER_SECRET?: string
     LASTFM_API_KEY?: string
+    LASTFM_KEY?: string
     LASTFM_USER?: string
+    LASTFM_USERNAME?: string
+    GITHUB_TOKEN?: string
+    GH_TOKEN?: string
   }
 }

@@ -1,10 +1,9 @@
-import { useLocation, useNavigate, useRouter } from '@tanstack/react-router'
+import { useLocation, useNavigate } from '@tanstack/react-router'
 import { navItems } from '@/components/wireframe/home/data'
 import { animateOutThen } from '@/lib/transition'
 
 export default function MobileHeader() {
   const navigate = useNavigate()
-  const router = useRouter()
   const { pathname } = useLocation()
 
   const go = (to: string) =>
@@ -54,9 +53,6 @@ export default function MobileHeader() {
             <a
               key={item.to}
               href={item.to}
-              onMouseEnter={() => {
-                void router.prefetchRoute({ to: item.to })
-              }}
               onClick={(e) => {
                 if (!active) {
                   e.preventDefault()

@@ -1,7 +1,12 @@
 import { createServerFn } from '@tanstack/react-start'
+import { getRuntimeEnv } from '@/server/platform'
 
 const CACHE_KEY = 'lastfm-v7'
 const CACHE_TTL = 5 * 60 * 1000
+
+// Public account name — also in .dev.vars/.env. Used only when the API key is
+// configured but LASTFM_USER was never uploaded as a production secret.
+const FALLBACK_USER = 'ffiinnyy'
 
 export interface LastFmItem {
   name: string
@@ -86,22 +91,32 @@ async function getDb() {
   }
 }
 
-async function getEnv() {
-  try {
-    const cf = await import('cloudflare:workers')
-    const key = cf.env.LASTFM_API_KEY
-    const user = cf.env.LASTFM_USER
-    if (key && user) return { key: key as string, user: user as string }
-  } catch {
-    // Workers env unavailable — fall through to dev envs.
-  }
+async function getEnv(): Promise<{ key: string; user: string } | null> {
+  // Workers env first (production) — accepts both secret spellings used on
+  // the dashboard. Reuses platform.ts so dev (Node SSR) gets the Wrangler
+  // platform proxy, which loads .dev.vars.
+  const runtime = await getRuntimeEnv()
+  const runtimeKey = runtime?.LASTFM_API_KEY ?? runtime?.LASTFM_KEY
+  const runtimeUser = runtime?.LASTFM_USER ?? runtime?.LASTFM_USERNAME
+  if (runtimeKey && runtimeUser) return { key: runtimeKey, user: runtimeUser }
+
+  // Vite/process env fallbacks for local runs outside Wrangler's proxy.
   const viteEnv = (import.meta as unknown as { env?: Record<string, string> }).env
-  if (viteEnv?.LASTFM_API_KEY && viteEnv?.LASTFM_USER) {
-    return { key: viteEnv.LASTFM_API_KEY, user: viteEnv.LASTFM_USER }
+  const key = runtimeKey ?? viteEnv?.LASTFM_API_KEY ?? viteEnv?.LASTFM_KEY
+  const user = runtimeUser ?? viteEnv?.LASTFM_USER ?? viteEnv?.LASTFM_USERNAME
+  if (key && user) return { key, user }
+  if (typeof process !== 'undefined' && process.env) {
+    const procKey = key ?? process.env.LASTFM_API_KEY ?? process.env.LASTFM_KEY
+    const procUser = user ?? process.env.LASTFM_USER ?? process.env.LASTFM_USERNAME
+    if (procKey && procUser) return { key: procKey, user: procUser }
   }
-  if (typeof process !== 'undefined' && process.env?.LASTFM_API_KEY && process.env?.LASTFM_USER) {
-    return { key: process.env.LASTFM_API_KEY, user: process.env.LASTFM_USER }
+  if (key) {
+    // API key uploaded as a secret but the username never was — the username
+    // is public, so fall back rather than showing the offline panel.
+    console.error('[lastfm] LASTFM_USER missing in env — falling back to', FALLBACK_USER)
+    return { key, user: FALLBACK_USER }
   }
+  console.error('[lastfm] LASTFM_API_KEY missing in env — music feed disabled')
   return null
 }
 
@@ -214,18 +229,22 @@ export const getLastFmData = createServerFn({ method: 'GET' }).handler(
     const db = await getDb()
     let stale: LastFmData | null = null
     if (db) {
-      const row = await db
-        .prepare('SELECT value, expires_at FROM cache WHERE key = ?')
-        .bind(CACHE_KEY)
-        .first<{ value: string; expires_at: number }>()
-      if (row) {
-        try {
-          const parsed = JSON.parse(row.value) as LastFmData
-          if (row.expires_at > Date.now()) return parsed
-          stale = parsed
-        } catch {
-          // Corrupt cache — refetch.
+      try {
+        const row = await db
+          .prepare('SELECT value, expires_at FROM cache WHERE key = ?')
+          .bind(CACHE_KEY)
+          .first<{ value: string; expires_at: number }>()
+        if (row) {
+          try {
+            const parsed = JSON.parse(row.value) as LastFmData
+            if (row.expires_at > Date.now()) return parsed
+            stale = parsed
+          } catch {
+            // Corrupt cache — refetch.
+          }
         }
+      } catch {
+        // Cache unavailable (e.g. migrations not applied) — fetch live below.
       }
     }
 
@@ -389,13 +408,18 @@ export const getLastFmData = createServerFn({ method: 'GET' }).handler(
       }
 
       if (db) {
-        await db
-          .prepare('INSERT OR REPLACE INTO cache (key, value, expires_at) VALUES (?, ?, ?)')
-          .bind(CACHE_KEY, JSON.stringify(data), Date.now() + CACHE_TTL)
-          .run()
+        try {
+          await db
+            .prepare('INSERT OR REPLACE INTO cache (key, value, expires_at) VALUES (?, ?, ?)')
+            .bind(CACHE_KEY, JSON.stringify(data), Date.now() + CACHE_TTL)
+            .run()
+        } catch {
+          // Cache write failed — still serve the fresh feed.
+        }
       }
       return data
-    } catch {
+    } catch (error) {
+      console.error('[lastfm] feed fetch failed', error)
       return stale
     }
   },

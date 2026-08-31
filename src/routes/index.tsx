@@ -100,7 +100,7 @@ function Home() {
           >
             <WindowHeader items={navItems} />
 
-            <main className="grid min-h-0 flex-1 overflow-y-auto border-b border-line animate-[page-in_300ms_ease-out] motion-reduce:animate-none xl:grid-cols-[minmax(20rem,28rem)_minmax(0,1fr)] xl:overflow-hidden 2xl:grid-cols-[480px_minmax(0,1fr)]">
+            <main className="grid min-h-0 flex-1 overflow-y-auto border-b border-line animate-[page-in_300ms_ease-out] motion-reduce:animate-none xl:grid-cols-[minmax(20rem,28rem)_minmax(0,1fr)] 2xl:grid-cols-[480px_minmax(0,1fr)]">
               <OverviewPane />
               <CanvasPane />
             </main>

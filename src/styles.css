@@ -43,14 +43,6 @@
 }
 
 @font-face {
-  font-family: "IBM Plex Mono";
-  src: url("/fonts/ibmplexmono-medium.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
   font-family: "Instrument Serif";
   src: url("/fonts/instrumentserif-regular.woff2") format("woff2");
   font-weight: 400;
@@ -160,7 +152,15 @@
   transform: none;
 }
 
+/* Motion-enter: visible by default (no-JS safe, and mobile shells without a
+   data-motion-ready root stay visible). Only a JS page with a motion root
+   hides content until its hydration rAF flips data-motion-ready. */
 .motion-enter {
+  opacity: 1;
+  transform: none;
+}
+
+.js [data-motion-ready='false'] .motion-enter {
   opacity: 0;
   transform: translateY(10px);
   transition:
@@ -169,7 +169,7 @@
   will-change: transform, opacity;
 }
 
-[data-motion-ready='true'] .motion-enter {
+.js [data-motion-ready='true'] .motion-enter {
   opacity: 1;
   transform: none;
 }
@@ -223,7 +223,7 @@ main > section:not(#home) {
     scroll-behavior: auto;
   }
 
-  .motion-enter {
+  .js [data-motion-ready] .motion-enter {
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
