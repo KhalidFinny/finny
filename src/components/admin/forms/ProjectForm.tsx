@@ -12,7 +12,9 @@ import { ghostBtn, inputCls, labelCls, panelCls, primaryBtn } from '@/components
 import { createProjectId, jsonToBullets, readFileAsDataUrl, splitLines } from '@/components/admin/utils'
 import Placeholder from '@/components/ui/Placeholder'
 
-const MAX_IMAGE_BYTES = 8 * 1024 * 1024
+const MAX_GALLERY_IMAGES = 20
+const FULL_MAX_DIMENSION = 1600
+const THUMB_MAX_DIMENSION = 640
 
 const CREATIVE_CATEGORY_IDS = new Set(['ui-ux', 'videography', 'photography'])
 
@@ -126,11 +128,12 @@ export default function ProjectForm({
 }: ProjectFormProps) {
   const [form, setForm] = useState<Project>(initial)
   const [galleryText, setGalleryText] = useState(jsonToBullets(initial.gallery ?? ''))
-  const [pendingImage, setPendingImage] = useState<File | null>(null)
+  const [pendingImage, setPendingImage] = useState<{ full: File; thumb: File } | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(initial.image || null)
-  const [pendingGallery, setPendingGallery] = useState<File[]>([])
+  const [pendingGallery, setPendingGallery] = useState<{ full: File; thumb: File }[]>([])
   const [galleryPreviews, setGalleryPreviews] = useState<string[]>([])
   const [isUploading, setIsUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState<{ done: number; total: number } | null>(null)
 
   useEffect(() => {
     setForm(initial)
@@ -139,6 +142,7 @@ export default function ProjectForm({
     setImagePreview(initial.image || null)
     setPendingGallery([])
     setGalleryPreviews([])
+    setUploadProgress(null)
   }, [initial])
 
   const isCreative = CREATIVE_CATEGORY_IDS.has(form.category_id)
@@ -153,37 +157,150 @@ export default function ProjectForm({
 
   /* ── Image handlers ──────────────────────────────────────────────────── */
 
-  const convertToWebp = async (file: File): Promise<File> => {
+  const decodeToCanvas = async (
+    file: File,
+    maxDimension: number,
+  ): Promise<HTMLCanvasElement | null> => {
     try {
       const bitmap = await createImageBitmap(file)
-      // Cap the longest edge at 1600px — the site never displays beyond
-      // ~735px (2x retina ≈ 1470px). Full-res webp q85 is 2-8MB per photo;
-      // at 1600w the same encode is 150-400KB, so 10+ gallery uploads stop
-      // saturating the connection and R2.
-      const MAX_DIMENSION = 1600
-      const scale = Math.min(1, MAX_DIMENSION / Math.max(bitmap.width, bitmap.height))
+      // Cap the longest edge — the site never displays beyond ~735px
+      // (2x retina ≈ 1470px). Full-res webp q85 is 2-8MB per photo; at 1600w
+      // the same encode is 150-400KB, so 10+ gallery uploads stop saturating
+      // the connection and R2.
+      const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height))
       const canvas = document.createElement('canvas')
       canvas.width = Math.max(1, Math.round(bitmap.width * scale))
       canvas.height = Math.max(1, Math.round(bitmap.height * scale))
       const context = canvas.getContext('2d')
       if (!context) {
         bitmap.close()
-        return file
+        return null
       }
       context.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
       bitmap.close()
-
-      const { promise, resolve } = Promise.withResolvers<Blob | null>()
-      canvas.toBlob(resolve, 'image/webp', 0.85)
-      const blob = await promise
-      if (!blob) return file
-
-      const baseName = file.name.replace(/\.[^.]+$/, '')
-      return new File([blob], `${baseName}.webp`, { type: 'image/webp' })
+      return canvas
     } catch {
-      // Conversion unsupported (e.g. tainted SVG) — keep the original file
-      return file
+      // createImageBitmap can't decode this format (e.g. some HEIC) — fall
+      // back to an <img> decode, which more browsers handle.
     }
+    try {
+      const url = URL.createObjectURL(file)
+      try {
+        const image = await new Promise<HTMLImageElement | null>((resolve) => {
+          const el = new Image()
+          el.onload = () => resolve(el)
+          el.onerror = () => resolve(null)
+          el.src = url
+        })
+        if (!image) return null
+        const scale = Math.min(1, maxDimension / Math.max(image.naturalWidth, image.naturalHeight))
+        const canvas = document.createElement('canvas')
+        canvas.width = Math.max(1, Math.round(image.naturalWidth * scale))
+        canvas.height = Math.max(1, Math.round(image.naturalHeight * scale))
+        const context = canvas.getContext('2d')
+        if (!context) return null
+        context.drawImage(image, 0, 0, canvas.width, canvas.height)
+        return canvas
+      } finally {
+        URL.revokeObjectURL(url)
+      }
+    } catch {
+      return null
+    }
+  }
+
+  const canvasToWebpFile = async (
+    canvas: HTMLCanvasElement,
+    fileName: string,
+  ): Promise<File | null> => {
+    const { promise, resolve } = Promise.withResolvers<Blob | null>()
+    canvas.toBlob(resolve, 'image/webp', 0.85)
+    const blob = await promise
+    if (!blob) return null
+    const baseName = fileName.replace(/\.[^.]+$/, '')
+    return new File([blob], `${baseName}.webp`, { type: 'image/webp' })
+  }
+
+  /** Full 1600w webp + 640w grid thumbnail — or null when the file can't be decoded. */
+  const convertImage = async (
+    file: File,
+  ): Promise<{ full: File; thumb: File } | null> => {
+    const canvas = await decodeToCanvas(file, FULL_MAX_DIMENSION)
+    if (!canvas) return null
+    const full = await canvasToWebpFile(canvas, file.name)
+    const thumbScale = Math.min(1, THUMB_MAX_DIMENSION / Math.max(canvas.width, canvas.height))
+    const thumbCanvas = document.createElement('canvas')
+    thumbCanvas.width = Math.max(1, Math.round(canvas.width * thumbScale))
+    thumbCanvas.height = Math.max(1, Math.round(canvas.height * thumbScale))
+    thumbCanvas.getContext('2d')?.drawImage(canvas, 0, 0, thumbCanvas.width, thumbCanvas.height)
+    const thumb = await canvasToWebpFile(thumbCanvas, file.name)
+    if (!full || !thumb) return null
+    return { full, thumb }
+  }
+
+  /** Run fn over items with at most `limit` in flight, preserving order. */
+  const mapConcurrent = async <T, R>(
+    items: T[],
+    limit: number,
+    fn: (item: T) => Promise<R>,
+  ): Promise<R[]> => {
+    const results: R[] = []
+    let cursor = 0
+    const worker = async () => {
+      while (cursor < items.length) {
+        const index = cursor
+        cursor += 1
+        results[index] = await fn(items[index])
+      }
+    }
+    await Promise.all(Array.from({ length: Math.min(limit, items.length) }, () => worker()))
+    return results
+  }
+
+  const uploadOne = async (item: { full: File; thumb: File }) => {
+    let timer: number | undefined
+    try {
+      return await Promise.race([
+        onUpload({
+          fileName: item.full.name,
+          dataUrl: await readFileAsDataUrl(item.full),
+          thumbDataUrl: await readFileAsDataUrl(item.thumb),
+        }),
+        new Promise<never>((_, reject) => {
+          timer = window.setTimeout(() => reject(new Error(`Timed out — ${item.full.name}`)), 45_000)
+        }),
+      ])
+    } finally {
+      window.clearTimeout(timer)
+    }
+  }
+
+  /**
+   * Upload with a small concurrency pool — firing all 20 at once saturates
+   * the connection and one hung request stalls every remaining upload.
+   * Failures are captured per-file so the rest still save.
+   */
+  interface UploadResult {
+    fileName: string
+    path?: string
+    error?: string
+  }
+
+  const uploadMany = async (
+    items: { full: File; thumb: File }[],
+    onProgress: (done: number, total: number) => void,
+  ): Promise<UploadResult[]> => {
+    return await mapConcurrent(items, 4, async (item): Promise<UploadResult> => {
+      try {
+        const uploaded = await uploadOne(item)
+        return { path: uploaded.path, fileName: item.full.name }
+      } catch (error) {
+        return {
+          fileName: item.full.name,
+          error: error instanceof Error ? error.message : 'Upload failed',
+        }
+      }
+    })
   }
 
   const handlePrimaryFiles = async (files: File[]) => {
@@ -193,31 +310,39 @@ export default function ProjectForm({
       onNotice('Only image files are supported')
       return
     }
-    if (file.size > MAX_IMAGE_BYTES) {
-      onNotice('Keep images under 8 MB')
+    const converted = await convertImage(file)
+    if (!converted) {
+      onNotice(`Skipped ${file.name} — couldn't convert to webp`)
       return
     }
-    const webp = await convertToWebp(file)
-    setPendingImage(webp)
-    setImagePreview(await readFileAsDataUrl(webp))
+    setPendingImage(converted)
+    setImagePreview(await readFileAsDataUrl(converted.full))
   }
 
   const handleGalleryFiles = async (files: File[]) => {
-    const accepted: File[] = []
-    const previews: string[] = []
-
-    for (const file of files) {
+    const remaining = MAX_GALLERY_IMAGES - existingGallery.length - pendingGallery.length
+    if (remaining <= 0) {
+      onNotice(`Gallery max is ${MAX_GALLERY_IMAGES} images`)
+      return
+    }
+    const batch = files.slice(0, remaining)
+    const converted = await mapConcurrent(batch, 3, async (file) => {
       if (!file.type.startsWith('image/')) {
-        onNotice(`Skipped ${file.name} — only image files are supported`)
+        return { file, result: null as { full: File; thumb: File } | null, reason: 'not an image' }
+      }
+      const result = await convertImage(file)
+      return { file, result, reason: result ? null : "couldn't convert to webp" }
+    })
+
+    const accepted: { full: File; thumb: File }[] = []
+    const previews: string[] = []
+    for (const { file, result, reason } of converted) {
+      if (!result) {
+        onNotice(`Skipped ${file.name} — ${reason}`)
         continue
       }
-      if (file.size > MAX_IMAGE_BYTES) {
-        onNotice(`Skipped ${file.name} — keep images under 8 MB`)
-        continue
-      }
-      const webp = await convertToWebp(file)
-      accepted.push(webp)
-      previews.push(await readFileAsDataUrl(webp))
+      accepted.push(result)
+      previews.push(await readFileAsDataUrl(result.full))
     }
 
     if (accepted.length === 0) return
@@ -257,25 +382,34 @@ export default function ProjectForm({
     try {
       let nextImage = form.image
       if (pendingImage) {
-        const uploaded = await onUpload({
-          fileName: pendingImage.name,
-          dataUrl: await readFileAsDataUrl(pendingImage),
-        })
-        nextImage = uploaded.path
+        setUploadProgress({ done: 0, total: 1 })
+        try {
+          const uploaded = await uploadOne(pendingImage)
+          nextImage = uploaded.path
+        } finally {
+          setUploadProgress(null)
+        }
       }
 
       const galleryItems = [...existingGallery]
       if (pendingGallery.length > 0) {
-        const uploadedGallery = await Promise.all(
-          pendingGallery.map(async (file) => {
-            const uploaded = await onUpload({
-              fileName: file.name,
-              dataUrl: await readFileAsDataUrl(file),
-            })
-            return uploaded.path
-          }),
-        )
-        galleryItems.push(...uploadedGallery)
+        setUploadProgress({ done: 0, total: pendingGallery.length })
+        try {
+          const results = await uploadMany(pendingGallery, (done, total) =>
+            setUploadProgress({ done, total }),
+          )
+          for (const result of results) {
+            if (!result.error && result.path) galleryItems.push(result.path)
+          }
+          const failed = results.filter((result) => result.error)
+          if (failed.length > 0) {
+            onNotice(
+              `${failed.length} of ${results.length} images failed — ${failed[0].fileName}: ${failed[0].error}`,
+            )
+          }
+        } finally {
+          setUploadProgress(null)
+        }
       }
 
       await onSave({
@@ -360,7 +494,7 @@ export default function ProjectForm({
       <MediaDropzone
         disabled={isBusy}
         label="Drop hero image"
-        note="Single image, max 8 MB."
+        note="Converted to webp, capped at 1600px."
         onFilesSelected={(files) => {
           void handlePrimaryFiles(files)
         }}
@@ -540,13 +674,18 @@ export default function ProjectForm({
         </div>
       )}
 
-      <div className="flex flex-wrap gap-3 pt-1">
+      <div className="flex flex-wrap items-center gap-3 pt-1">
         <button type="submit" className={primaryBtn} disabled={isBusy || descriptionTooLong}>
           {isBusy ? 'Saving…' : 'Save'}
         </button>
         <button type="button" onClick={onCancel} className={ghostBtn} disabled={isBusy}>
           Cancel
         </button>
+        {uploadProgress ? (
+          <p className="font-mono text-xs uppercase tracking-[0.18em] text-graphite" role="status">
+            Uploading {uploadProgress.done}/{uploadProgress.total}
+          </p>
+        ) : null}
       </div>
     </form>
   )

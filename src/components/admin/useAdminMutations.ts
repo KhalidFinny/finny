@@ -45,17 +45,19 @@ export function useAdminMutations(
 ): AdminMutations {
   const queryClient = useQueryClient()
 
-  const invalidate = async () => {
-    await queryClient.invalidateQueries({ queryKey: ['site'] })
+  const invalidate = () => {
+    // Fire-and-forget: the mutation resolves immediately, the panel refreshes
+    // when the refetch lands instead of keeping the save button busy.
+    void queryClient.invalidateQueries({ queryKey: ['site'] })
   }
 
   const onError = (error: Error) => onNotice(error.message)
 
   const saveProjectMutation = useMutation({
     mutationFn: (project: Project) => saveProject({ data: { input: project, adminKey } }),
-    onSuccess: async () => {
+    onSuccess: () => {
       onNotice('Project saved')
-      await invalidate()
+      invalidate()
     },
     onError,
   })
@@ -68,90 +70,90 @@ export function useAdminMutations(
 
   const reorderProjectsMutation = useMutation({
     mutationFn: (ids: string[]) => reorderProjects({ data: { input: ids, adminKey } }),
-    onSuccess: async () => {
+    onSuccess: () => {
       onNotice('Project order saved')
-      await invalidate()
+      invalidate()
     },
     onError,
   })
 
   const resetProjectsMutation = useMutation({
     mutationFn: (confirmed: boolean) => resetProjects({ data: { input: confirmed, adminKey } }),
-    onSuccess: async () => {
+    onSuccess: () => {
       onNotice('All projects reset')
-      await invalidate()
+      invalidate()
     },
     onError,
   })
 
   const deleteProjectMutation = useMutation({
     mutationFn: (id: string) => deleteProject({ data: { input: id, adminKey } }),
-    onSuccess: async () => {
+    onSuccess: () => {
       onNotice('Project deleted')
-      await invalidate()
+      invalidate()
     },
     onError,
   })
 
   const saveExperienceMutation = useMutation({
     mutationFn: (experience: Experience) => saveExperience({ data: { input: experience, adminKey } }),
-    onSuccess: async () => {
+    onSuccess: () => {
       onNotice('Experience saved')
-      await invalidate()
+      invalidate()
     },
     onError,
   })
 
   const deleteExperienceMutation = useMutation({
     mutationFn: (id: string) => deleteExperience({ data: { input: id, adminKey } }),
-    onSuccess: async () => {
+    onSuccess: () => {
       onNotice('Experience deleted')
-      await invalidate()
+      invalidate()
     },
     onError,
   })
 
   const saveSocialMutation = useMutation({
     mutationFn: (social: Social) => saveSocial({ data: { input: social, adminKey } }),
-    onSuccess: async () => {
+    onSuccess: () => {
       onNotice('Social saved')
-      await invalidate()
+      invalidate()
     },
     onError,
   })
 
   const deleteSocialMutation = useMutation({
     mutationFn: (id: number) => deleteSocial({ data: { input: id, adminKey } }),
-    onSuccess: async () => {
+    onSuccess: () => {
       onNotice('Social deleted')
-      await invalidate()
+      invalidate()
     },
     onError,
   })
 
   const saveTechMutation = useMutation({
     mutationFn: (tech: Tech) => saveTech({ data: { input: tech, adminKey } }),
-    onSuccess: async () => {
+    onSuccess: () => {
       onNotice('Tech saved')
-      await invalidate()
+      invalidate()
     },
     onError,
   })
 
   const deleteTechMutation = useMutation({
     mutationFn: (id: number) => deleteTech({ data: { input: id, adminKey } }),
-    onSuccess: async () => {
+    onSuccess: () => {
       onNotice('Tech deleted')
-      await invalidate()
+      invalidate()
     },
     onError,
   })
 
   const saveCvPathMutation = useMutation({
     mutationFn: (path: string) => saveCvPath({ data: { input: path, adminKey } }),
-    onSuccess: async () => {
+    onSuccess: () => {
       onNotice('CV path saved')
-      await invalidate()
+      invalidate()
     },
     onError,
   })

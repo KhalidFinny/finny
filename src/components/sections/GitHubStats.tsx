@@ -117,8 +117,8 @@ export default function GitHubStats({ stats }: { stats: GitHubStats }) {
           </article>
 
           <dl className="mt-3 grid grid-cols-2 gap-3 xl:col-span-4 xl:mt-0 xl:grid-cols-4">
-            <NumberTile label="Stars" value={stats.totalStars} icon={faStar} step={3} />
-            <NumberTile label="Forks" value={stats.totalForks} icon={faCodeBranch} step={4} />
+            <NumberTile label="Stars" value={stats.reposOk ? stats.totalStars : '—'} icon={faStar} step={3} />
+            <NumberTile label="Forks" value={stats.reposOk ? stats.totalForks : '—'} icon={faCodeBranch} step={4} />
             <NumberTile label="Repos" value={user.publicRepos} icon={faFolder} step={5} />
             <NumberTile label="Contributions" value={stats.totalContributions} icon={faChartColumn} step={5} />
           </dl>
@@ -127,24 +127,31 @@ export default function GitHubStats({ stats }: { stats: GitHubStats }) {
             <h3 className="text-sm font-medium uppercase tracking-[0.14em] text-brand">
               Top languages
             </h3>
-            <ol className="mt-4 space-y-3.5">
-              {stats.topLanguages.map((language) => (
-                <li key={language.name}>
-                  <div className="flex items-baseline justify-between gap-4">
-                    <span className="text-base font-medium text-ink">{language.name}</span>
-                    <span className="text-sm tabular-nums text-graphite">
-                      {language.count} repos
-                    </span>
-                  </div>
-                  <div className="mt-2 h-2 rounded-full bg-line">
-                    <div
-                      className="h-full rounded-full bg-brand"
-                      style={{ width: `${Math.round((language.count / maxLangCount) * 100)}%` }}
-                    />
-                  </div>
-                </li>
-              ))}
-            </ol>
+            {stats.reposOk ? (
+              <ol className="mt-4 space-y-3.5">
+                {stats.topLanguages.map((language) => (
+                  <li key={language.name}>
+                    <div className="flex items-baseline justify-between gap-4">
+                      <span className="text-base font-medium text-ink">{language.name}</span>
+                      <span className="text-sm tabular-nums text-graphite">
+                        {language.count} repos
+                      </span>
+                    </div>
+                    <div className="mt-2 h-2 rounded-full bg-line">
+                      <div
+                        className="h-full rounded-full bg-brand"
+                        style={{ width: `${Math.round((language.count / maxLangCount) * 100)}%` }}
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p className="mt-4 text-base leading-relaxed text-graphite">
+                Repos data unavailable — the GitHub API rate-limited this request.
+                Check back later.
+              </p>
+            )}
           </article>
 
           <dl className="mt-3 grid grid-cols-2 gap-3 xl:col-span-3 xl:mt-0">

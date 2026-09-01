@@ -27,6 +27,7 @@ export interface GitHubStats {
   totalContributions: number
   totalStars: number
   totalForks: number
+  reposOk: boolean
   topLanguages: { name: string; count: number }[]
   activity: {
     currentStreak: number
@@ -81,7 +82,8 @@ async function fetchStats(): Promise<GitHubStats> {
     public_repos: number
     html_url: string
   }
-  const rawRepos = (reposRes.ok ? await reposRes.json() : []) as Array<{
+  const reposOk = reposRes.ok
+  const rawRepos = (reposOk ? await reposRes.json() : []) as Array<{
     stargazers_count?: number
     forks_count?: number
     language?: string | null
@@ -153,6 +155,7 @@ async function fetchStats(): Promise<GitHubStats> {
     totalContributions,
     totalStars,
     totalForks,
+    reposOk,
     topLanguages,
     activity: { currentStreak, longestStreak, activeDays, avgPerActiveDay },
   }
@@ -174,6 +177,11 @@ export const getGitHubStats = createServerFn({ method: 'GET' }).handler(
         if (row) {
           try {
             cachedStats = JSON.parse(row.value) as GitHubStats
+            // Legacy rows predate reposOk — derive it from what they contain.
+            cachedStats = {
+              ...cachedStats,
+              reposOk: cachedStats.reposOk ?? cachedStats.topLanguages.length > 0,
+            }
           } catch {
             cachedStats = null
           }

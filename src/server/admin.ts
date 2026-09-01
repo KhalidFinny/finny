@@ -31,6 +31,7 @@ type ProjectMediaRow = Pick<Project, 'image' | 'gallery'>
 export interface UploadProjectMediaInput {
   fileName: string
   dataUrl: string
+  thumbDataUrl?: string
 }
 
 /** Every admin mutation carries the secret and asserts it server-side. */
@@ -118,9 +119,12 @@ function getUploadExtension(fileName: string, contentType: string) {
 async function normalizeProjectSortOrder(db: D1Database) {
   const rows = await db.prepare('SELECT id FROM projects ORDER BY sort_order, id').all<{ id: string }>()
 
-  for (const [index, row] of rows.results.entries()) {
-    await db.prepare('UPDATE projects SET sort_order = ? WHERE id = ?').bind(index, row.id).run()
-  }
+  // One round trip instead of one UPDATE per project.
+  await db.batch(
+    rows.results.map((row, index) =>
+      db.prepare('UPDATE projects SET sort_order = ? WHERE id = ?').bind(index, row.id),
+    ),
+  )
 }
 
 export const verifyAdminKey = createServerFn({ method: 'POST' })
@@ -153,6 +157,19 @@ export const uploadProjectMedia = createServerFn({ method: 'POST' })
       httpMetadata: { contentType },
       customMetadata: { originalName: data.input.fileName },
     })
+
+    // Grid thumbnails — stored as a -thumb sibling so polaroid covers stay small.
+    if (data.input.thumbDataUrl) {
+      const thumb = decodeImageDataUrl(data.input.thumbDataUrl)
+      if (thumb.contentType === 'image/svg+xml') {
+        throw new Error('SVG uploads are not allowed')
+      }
+      const thumbKey = key.replace(/\.[^.]+$/, '-thumb.$&')
+      await bucket.put(thumbKey, thumb.bytes, {
+        httpMetadata: { contentType: thumb.contentType },
+        customMetadata: { originalName: data.input.fileName },
+      })
+    }
 
     return {
       key,
@@ -206,9 +223,12 @@ export const reorderProjects = createServerFn({ method: 'POST' })
     const db = await requireDb()
     const orderedIds = [...new Set(data.input.filter(Boolean))]
 
-    for (const [index, id] of orderedIds.entries()) {
-      await db.prepare('UPDATE projects SET sort_order = ? WHERE id = ?').bind(index, id).run()
-    }
+    // One round trip instead of one UPDATE per project.
+    await db.batch(
+      orderedIds.map((id, index) =>
+        db.prepare('UPDATE projects SET sort_order = ? WHERE id = ?').bind(index, id),
+      ),
+    )
 
     return { ok: true }
   })

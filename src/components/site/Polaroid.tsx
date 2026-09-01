@@ -28,6 +28,8 @@ interface PolaroidProps {
   className?: string
   /** Aspect of the photo area — defaults to a 4:3 print crop. */
   photoClassName?: string
+  /** Grid variant (e.g. a thumbnail) — on error, swap to this before showing the placeholder. */
+  fallbackSrc?: string
 }
 
 export default function Polaroid({
@@ -42,8 +44,10 @@ export default function Polaroid({
   lazy = true,
   className,
   photoClassName,
+  fallbackSrc,
 }: PolaroidProps) {
   const [failed, setFailed] = useState(false)
+  const [currentSrc, setCurrentSrc] = useState(src ?? undefined)
   const rotationClass = rotation ?? (index !== undefined ? COVER_ROTATIONS[index % COVER_ROTATIONS.length] : undefined)
 
   return (
@@ -57,10 +61,13 @@ export default function Polaroid({
       <div className={cn('relative overflow-hidden bg-canvas', photoClassName ?? 'aspect-[4/3]')}>
         {src && !failed ? (
           <img
-            src={src}
+            src={currentSrc}
             alt={alt}
             loading={lazy ? 'lazy' : 'eager'}
-            onError={() => setFailed(true)}
+            onError={() => {
+              if (fallbackSrc && currentSrc !== fallbackSrc) setCurrentSrc(fallbackSrc)
+              else setFailed(true)
+            }}
             className="h-full w-full object-cover"
           />
         ) : (

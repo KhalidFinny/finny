@@ -19,7 +19,7 @@ function RootComponent() {
   const handleBootDone = useCallback(() => setBooting(false), [])
 
   return (
-    <html lang="en">
+    <html lang="en" className="js">
       <head>
         {typeof window === 'undefined' ? <HeadContent /> : null}
         <meta charSet="UTF-8" />
@@ -51,11 +51,6 @@ function RootComponent() {
           type="font/woff2"
           href="/fonts/ibmplexmono-regular.woff2"
           crossOrigin="anonymous"
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: "document.documentElement.classList.add('js')",
-          }}
         />
         <link rel="icon" type="image/webp" href="/icons/logo.webp" />
         <title>Khalid Atthoriq</title>

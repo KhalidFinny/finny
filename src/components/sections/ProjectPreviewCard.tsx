@@ -48,7 +48,7 @@ export default function ProjectPreviewCard({ project }: { project: Project }) {
         <div className="mt-3 grid gap-2.5 sm:grid-cols-[minmax(0,1fr)_15.5rem] sm:items-end">
           <h2
             id={titleId}
-            className="min-w-0 line-clamp-2 font-serif text-[clamp(2.1rem,3.8vw,3.25rem)] leading-[0.94] tracking-[-0.025em] text-ink [text-wrap:balance]"
+            className="min-w-0 font-serif text-[clamp(2.1rem,3.8vw,3.25rem)] leading-[0.94] tracking-[-0.025em] text-ink [text-wrap:balance]"
           >
             {project.title}
           </h2>
