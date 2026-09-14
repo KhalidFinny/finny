@@ -9,6 +9,7 @@ import Skeleton from '@/components/ui/Skeleton'
 import WindowHeader from '@/components/wireframe/home/WindowHeader'
 import { navItems } from '@/components/wireframe/home/data'
 import useHomeMotion from '@/components/wireframe/home/useHomeMotion'
+import AppScale from '@/components/site/AppScale'
 import { queryClient } from '@/lib/queryClient'
 import { githubQueryOptions, siteQueryOptions } from '@/lib/queries'
 
@@ -48,15 +49,22 @@ function StatsUnavailable() {
 
 function StatsPending() {
   return (
-    <div className="h-dvh bg-wall p-1.5 md:p-3">
-      <div className="mx-auto flex h-full max-w-[1760px] flex-col overflow-hidden rounded-[18px] border border-line bg-paper">
-        <WindowHeader items={navItems} />
-        <main className="min-h-0 flex-1 overflow-y-auto border-b border-line px-4 py-6 md:px-6">
-          <StatsSkeleton />
-        </main>
-        <div className="h-12 shrink-0 border-t border-line bg-paper" />
+    <>
+      <div className="md:hidden min-h-dvh bg-wall">
+        <StatsSkeleton />
       </div>
-    </div>
+      <div className="hidden md:block">
+        <AppScale>
+          <div className="flex h-full w-full flex-col overflow-hidden rounded-[18px] border border-line bg-paper">
+            <WindowHeader items={navItems} />
+            <main className="min-h-0 flex-1 overflow-y-auto border-b border-line px-4 py-6 md:px-6">
+              <StatsSkeleton />
+            </main>
+            <div className="h-12 shrink-0 border-t border-line bg-paper" />
+          </div>
+        </AppScale>
+      </div>
+    </>
   )
 }
 
@@ -91,12 +99,12 @@ function StatsPage() {
         </MobileShell>
       </div>
       <div className="hidden md:block">
-        <div className="h-dvh bg-wall p-1.5 md:p-3">
+        <AppScale>
       <div
         ref={rootRef}
         data-motion-pending="false"
         data-motion-ready="false"
-        className="mx-auto flex h-full max-w-[1760px] flex-col overflow-hidden rounded-[18px] border border-line bg-paper page-grid"
+        className="flex h-full w-full flex-col overflow-hidden rounded-[18px] border border-line bg-paper page-grid"
       >
         <WindowHeader items={navItems} cvHref={profile.cv_path} />
         <main className="min-h-0 flex-1 overflow-y-auto border-b border-line animate-[page-in_300ms_ease-out] motion-reduce:animate-none">
@@ -110,7 +118,7 @@ function StatsPage() {
         </main>
         <Ticker experiences={experiences} projects={projects} techs={techs} />
         </div>
-      </div>
+        </AppScale>
       </div>
     </>
   )

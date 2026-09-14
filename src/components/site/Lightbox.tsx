@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 
 export default function Lightbox({
   url,
@@ -29,7 +30,10 @@ export default function Lightbox({
 
   const mediaLabel = kind === 'image' ? 'image' : 'video'
 
-  return (
+  // Portal to <body> so the overlay is not trapped inside the scale-to-fit
+  // frame (a transform ancestor would otherwise anchor it to the app, not the
+  // viewport, and scale it).
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <button
         type="button"
@@ -68,6 +72,7 @@ export default function Lightbox({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

@@ -1,5 +1,6 @@
 import { useRef, useState, type PointerEvent, type ReactNode } from 'react'
 import { cn } from '@/components/ui/cn'
+import { useAppScale } from '@/components/site/AppScale'
 
 const stackTools = [
   'React',
@@ -70,6 +71,9 @@ function DraggablePiece({
   const [offset, setOffset] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const dragRef = useRef<DragSnapshot | null>(null)
+  // The whole app is scale-to-fitted; pointer clientX/Y are in viewport px, so
+  // divide the drag delta by the scale to keep the piece under the cursor 1:1.
+  const scale = useAppScale()
 
   const endDrag = (event: PointerEvent<HTMLDivElement>) => {
     if (dragRef.current?.pointerId !== event.pointerId) return
@@ -104,8 +108,8 @@ function DraggablePiece({
       }}
       onPointerMove={(event) => {
         if (dragRef.current?.pointerId !== event.pointerId) return
-        const deltaX = event.clientX - dragRef.current.startX
-        const deltaY = event.clientY - dragRef.current.startY
+        const deltaX = (event.clientX - dragRef.current.startX) / scale
+        const deltaY = (event.clientY - dragRef.current.startY) / scale
         setOffset({
           x: dragRef.current.offsetX + deltaX,
           y: dragRef.current.offsetY + deltaY,

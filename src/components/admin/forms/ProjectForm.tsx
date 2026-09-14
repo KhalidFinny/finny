@@ -11,12 +11,18 @@ import TechSelect from '@/components/admin/TechSelect'
 import { ghostBtn, inputCls, labelCls, panelCls, primaryBtn } from '@/components/admin/styles'
 import { createProjectId, jsonToBullets, readFileAsDataUrl, splitLines } from '@/components/admin/utils'
 import Placeholder from '@/components/ui/Placeholder'
+import {
+  fetchYouTubeMetadata,
+  parseYouTubeId,
+  youtubeEmbedUrl,
+  youtubeThumbUrl,
+} from '@/lib/youtube'
 
 const MAX_GALLERY_IMAGES = 20
 const FULL_MAX_DIMENSION = 1600
 const THUMB_MAX_DIMENSION = 640
 
-const CREATIVE_CATEGORY_IDS = new Set(['ui-ux', 'videography', 'photography'])
+const CREATIVE_CATEGORY_IDS = new Set(['videography', 'photography'])
 
 const ROLE_SUGGESTIONS = [
   'Frontend Developer',
@@ -134,6 +140,8 @@ export default function ProjectForm({
   const [galleryPreviews, setGalleryPreviews] = useState<string[]>([])
   const [isUploading, setIsUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState<{ done: number; total: number } | null>(null)
+  const [ytUrl, setYtUrl] = useState('')
+  const [ytError, setYtError] = useState<string | null>(null)
 
   useEffect(() => {
     setForm(initial)
@@ -146,6 +154,7 @@ export default function ProjectForm({
   }, [initial])
 
   const isCreative = CREATIVE_CATEGORY_IDS.has(form.category_id)
+  const isVideo = form.category_id === 'videography'
   const isBusy = isSaving || isUploading
   const existingGallery = splitLines(galleryText)
   const allGallery = [...existingGallery, ...galleryPreviews]
@@ -354,6 +363,30 @@ export default function ProjectForm({
     setPendingImage(null)
     setImagePreview(null)
     set('image', '')
+  }
+
+  const importYouTube = async (): Promise<void> => {
+    const id = parseYouTubeId(ytUrl)
+    if (!id) {
+      setYtError('Paste a valid YouTube watch, share, or embed link')
+      return
+    }
+    setYtError(null)
+    try {
+      const metadata = await fetchYouTubeMetadata(id)
+      const embedUrl = youtubeEmbedUrl(id)
+      const thumbnail = youtubeThumbUrl(id)
+      setForm((prev) => ({
+        ...prev,
+        title: prev.title || metadata.title,
+        youtube_embed: embedUrl,
+        image: prev.image || thumbnail,
+      }))
+      setImagePreview((current) => current || thumbnail)
+      onNotice('Imported title and thumbnail')
+    } catch (error) {
+      setYtError(error instanceof Error ? error.message : 'Failed to import YouTube metadata')
+    }
   }
 
   const removeGalleryItem = (index: number) => {
@@ -579,6 +612,55 @@ export default function ProjectForm({
     </div>
   )
 
+  const videoSection = (
+    <div className="space-y-3">
+      <Field label="YouTube link">
+        <input
+          className={inputCls}
+          value={ytUrl}
+          onChange={(event) => {
+            setYtUrl(event.target.value)
+            setYtError(null)
+          }}
+          placeholder="https://www.youtube.com/watch?v=… or youtu.be/…"
+        />
+        <p className="mt-1 text-xs font-medium uppercase tracking-[0.14em] text-mist">
+          Import pulls the title and a thumbnail for the preview.
+        </p>
+      </Field>
+      {ytError ? (
+        <p className="text-sm leading-relaxed text-brand">{ytError}</p>
+      ) : null}
+      <button type="button" onClick={() => void importYouTube()} className={ghostBtn} disabled={isBusy}>
+        Import from YouTube
+      </button>
+
+      {form.youtube_embed ? (
+        <div className="space-y-2">
+          <iframe
+            src={form.youtube_embed}
+            title={form.title || 'YouTube preview'}
+            className="aspect-video w-full rounded-[12px] border border-line bg-ink"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+          <div className="flex flex-wrap gap-x-3 gap-y-1 font-mono text-xs uppercase tracking-[0.18em] text-graphite">
+            {form.title ? <span>{form.title}</span> : null}
+            {form.image ? <span aria-hidden="true" className="h-1 w-1 self-center rounded-full bg-rosso" /> : null}
+            <span>{form.youtube_embed}</span>
+          </div>
+        </div>
+      ) : (
+        <div className={`flex items-center justify-center ${panelCls} bg-paper p-3`}>
+          <Placeholder
+            label={form.title || 'Video preview'}
+            className="aspect-video w-full rounded-[12px] border border-line"
+          />
+        </div>
+      )}
+    </div>
+  )
+
   /* ── Render ──────────────────────────────────────────────────────────── */
 
   return (
@@ -615,8 +697,11 @@ export default function ProjectForm({
         </p>
       </Field>
 
-      {isCreative ? (
-        /* ── Creative layout: hero + gallery side by side ─────────────── */
+      {isVideo ? (
+        /* ── Video layout: YouTube import + embed preview ─────────────── */
+        videoSection
+      ) : isCreative ? (
+        /* ── Creative/photo layout: hero + gallery side by side ───────── */
         <div className="grid gap-3 xl:grid-cols-2">
           {heroSection}
           {gallerySection}

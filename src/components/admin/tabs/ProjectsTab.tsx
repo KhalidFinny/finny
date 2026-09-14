@@ -83,7 +83,7 @@ export default function ProjectsTab({
                 setDraft({
                   kind: 'project',
                   isNew: true,
-                  item: createEmptyProject(orderedProjects, 'ui-ux'),
+                  item: createEmptyProject(orderedProjects, 'photography'),
                 })
               }
             >

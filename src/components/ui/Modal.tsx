@@ -1,4 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 
 interface ModalProps {
   open: boolean
@@ -56,7 +57,8 @@ export default function Modal({
 
   if (!open) return null
 
-  return (
+  // Portal to <body> so the dialog is not trapped inside the scale-to-fit frame.
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-ink/30 px-4 pt-[8vh] pb-[8vh]">
       <button
         type="button"
@@ -92,6 +94,7 @@ export default function Modal({
         </div>
         <div className="max-h-[70vh] overflow-y-auto px-5 py-5 md:px-6 md:py-6">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

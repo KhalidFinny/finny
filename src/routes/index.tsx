@@ -8,6 +8,7 @@ import Skeleton from '@/components/ui/Skeleton'
 import WindowHeader from '@/components/wireframe/home/WindowHeader'
 import { navItems } from '@/components/wireframe/home/data'
 import useHomeMotion from '@/components/wireframe/home/useHomeMotion'
+import AppScale from '@/components/site/AppScale'
 
 export const Route = createFileRoute('/')({
   loader: async () => null,
@@ -38,10 +39,10 @@ function HomePending() {
         </main>
       </div>
       <div className="hidden md:block">
-        <div className="h-dvh bg-wall p-1.5 md:p-3">
-          <div className="mx-auto flex h-full max-w-[1760px] flex-col overflow-hidden rounded-[18px] border border-line bg-paper">
+        <AppScale>
+          <div className="flex h-full w-full flex-col overflow-hidden rounded-[18px] border border-line bg-paper">
             <WindowHeader items={navItems} />
-            <main className="grid min-h-0 flex-1 overflow-y-auto border-b border-line xl:grid-cols-[minmax(20rem,28rem)_minmax(0,1fr)] 2xl:grid-cols-[480px_minmax(0,1fr)]">
+            <main className="grid min-h-0 flex-1 overflow-y-auto border-b border-line xl:grid-cols-[minmax(18rem,min(26vw,30rem))_minmax(0,1fr)]">
               <div className="border-b border-line bg-paper xl:border-b-0 xl:border-r">
                 <div className="border-b border-line bg-canvas px-4 py-2.5 md:px-6">
                   <Skeleton className="h-8 w-28" />
@@ -75,7 +76,7 @@ function HomePending() {
               <Skeleton className="h-20 w-full rounded-none border-0" />
             </div>
           </div>
-        </div>
+        </AppScale>
       </div>
     </>
   )
@@ -91,23 +92,23 @@ function Home() {
         <MobileHome />
       </div>
       <div className="hidden md:block">
-        <div className="h-dvh bg-wall p-1.5 md:p-3">
+        <AppScale>
           <div
             ref={rootRef}
             data-motion-pending="false"
             data-motion-ready="false"
-            className="mx-auto flex h-full max-w-[1760px] flex-col overflow-hidden rounded-[18px] border border-line bg-paper page-grid"
+            className="flex h-full w-full flex-col overflow-hidden rounded-[18px] border border-line bg-paper page-grid"
           >
             <WindowHeader items={navItems} />
 
-            <main className="grid min-h-0 flex-1 overflow-y-auto border-b border-line animate-[page-in_300ms_ease-out] motion-reduce:animate-none xl:grid-cols-[minmax(20rem,28rem)_minmax(0,1fr)] 2xl:grid-cols-[480px_minmax(0,1fr)]">
+            <main className="grid min-h-0 flex-1 overflow-y-auto border-b border-line animate-[page-in_300ms_ease-out] motion-reduce:animate-none xl:grid-cols-[minmax(18rem,min(26vw,30rem))_minmax(0,1fr)]">
               <OverviewPane />
               <CanvasPane />
             </main>
 
             <StatusBar />
           </div>
-        </div>
+        </AppScale>
       </div>
     </>
   )

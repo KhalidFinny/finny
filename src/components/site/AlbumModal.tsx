@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import type { Project } from '@/types/site'
 import FaIcon from '@/components/ui/FaIcon'
@@ -108,7 +109,8 @@ export default function AlbumModal({
   const controlCls =
     'inline-flex h-11 w-11 items-center justify-center rounded-full border border-line bg-paper text-ink transition-colors duration-200 hover:border-deep-line disabled:cursor-not-allowed disabled:opacity-40'
 
-  return (
+  // Portal to <body> so the overlay is not trapped inside the scale-to-fit frame.
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       onPointerDown={(event) => {
@@ -173,6 +175,7 @@ export default function AlbumModal({
           × Close
         </button>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

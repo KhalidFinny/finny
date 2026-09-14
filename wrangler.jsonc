@@ -6,6 +6,13 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "finny",
   "main": "./dist/server/server.js",
+  "main": "./dist/server/server.js",
+  "main": "./dist/server/server.js",
+  "main": "./dist/server/server.js",
+  "main": "./dist/server/server.js",
+  "main": "./dist/server/server.js",
+  "main": "./dist/server/server.js",
+  "main": "./dist/server/server.js",
 	// Last.fm API key is public by design (sent in every request URL, read-only,
 	// scoped to the account's public scrobbles) — safe as a plain var, not a secret.
 	"vars": {
