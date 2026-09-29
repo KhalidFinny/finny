@@ -19,6 +19,10 @@
 
 # production
 /build
+/dist
+
+# tanstack
+/.tanstack
 
 # misc
 .DS_Store
@@ -45,3 +49,9 @@ next-env.d.ts
 .dev.vars*
 !.dev.vars.example
 !.env.example
+
+# wrangler local state (resolved config + copied dev vars)
+/finny
+
+# generated worker types
+/worker-configuration.d.ts
