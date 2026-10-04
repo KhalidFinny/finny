@@ -7,7 +7,11 @@ import WindowHeader from '@/components/wireframe/home/WindowHeader'
 import { navItems } from '@/components/wireframe/home/data'
 import { queryClient } from '@/lib/queryClient'
 import BootScreen from '@/components/site/BootScreen'
+import { ogImagePath } from '@/generated/ogImage'
 import '@/styles.css'
+
+const SITE_URL = 'https://fiinnyy.my.id'
+const OG_IMAGE = `${SITE_URL}${ogImagePath}`
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -55,20 +59,20 @@ function RootComponent() {
         <link rel="icon" type="image/svg+xml" href="/icons/logo-web.svg" />
         <title>Khalid Atthoriq | Fullstack Creative Developer</title>
         <meta name="description" content="I'm Khalid Atthoriq — I build fullstack apps, design interfaces, and make visual work with an engineer's structure and a creative eye." />
-        <link rel="canonical" href="https://fiinnyy.my.id/" />
+        <link rel="canonical" href={`${SITE_URL}/`} />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Khalid Atthoriq" />
         <meta property="og:title" content="Khalid Atthoriq | Fullstack Creative Developer" />
         <meta property="og:description" content="I'm Khalid Atthoriq — I build fullstack apps, design interfaces, and make visual work with an engineer's structure and a creative eye." />
-        <meta property="og:url" content="https://fiinnyy.my.id/" />
-        <meta property="og:image" content="https://fiinnyy.my.id/og-image.png" />
+        <meta property="og:url" content={`${SITE_URL}/`} />
+        <meta property="og:image" content={OG_IMAGE} />
         <meta property="og:image:alt" content="Khalid Atthoriq — Clean. Workable. Full of character." />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Khalid Atthoriq | Fullstack Creative Developer" />
         <meta name="twitter:description" content="I'm Khalid Atthoriq — I build fullstack apps, design interfaces, and make visual work with an engineer's structure and a creative eye." />
-        <meta name="twitter:image" content="https://fiinnyy.my.id/og-image.png" />
+        <meta name="twitter:image" content={OG_IMAGE} />
         <meta name="twitter:image:alt" content="Khalid Atthoriq — Clean. Workable. Full of character." />
       </head>
       <body>
