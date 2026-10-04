@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>finny — og card</title>
+<style>
+  /* Real site fonts, referenced from public/fonts so the card carries the
+     same voice as the site. Rendered headlessly to public/og-image.png. */
+  @font-face {
+    font-family: "Schibsted Grotesk";
+    src: url("../public/fonts/schibstedgrotesk-variable.woff2") format("woff2-variations");
+    font-weight: 400 700;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "IBM Plex Mono";
+    src: url("../public/fonts/ibmplexmono-regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "Instrument Serif";
+    src: url("../public/fonts/instrumentserif-regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "Instrument Serif";
+    src: url("../public/fonts/instrumentserif-italic.woff2") format("woff2");
+    font-weight: 400;
+    font-style: italic;
+  }
+
+  :root {
+    --wall: #f7f2ed;
+    --paper: #fffdfc;
+    --ink: #18120f;
+    --graphite: #736661;
+    --mist: #a08f89;
+    --line: #e7d5d1;
+    --deep-line: #d7bbb6;
+    --brand: #970b2d;
+    --rosso: #c12a48;
+    --blush: #f8ecee;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+
+  body {
+    font-family: "Schibsted Grotesk", sans-serif;
+    color: var(--ink);
+    background-color: var(--wall);
+    background-image:
+      linear-gradient(to right, rgba(231, 213, 209, 0.75) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(231, 213, 209, 0.75) 1px, transparent 1px);
+    background-size: 40px 40px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .frame {
+    position: absolute;
+    inset: 26px;
+    border: 2px solid var(--line);
+    border-radius: 22px;
+    background: var(--paper);
+    background-image:
+      linear-gradient(to right, rgba(231, 213, 209, 0.45) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(231, 213, 209, 0.45) 1px, transparent 1px);
+    background-size: 40px 40px;
+    overflow: hidden;
+  }
+
+  /* ---- left: editorial column ---- */
+  .copy {
+    position: absolute;
+    left: 66px;
+    top: 58px;
+    width: 560px;
+    height: 486px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 17px;
+    font-weight: 400;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--brand);
+  }
+  .eyebrow .mark {
+    width: 11px;
+    height: 11px;
+    background: var(--brand);
+    flex: none;
+  }
+
+  .role {
+    margin-top: 12px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 14px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--graphite);
+  }
+
+  h1 {
+    margin-top: 30px;
+    font-family: "Instrument Serif", Georgia, serif;
+    font-weight: 400;
+    font-size: 82px;
+    line-height: 0.93;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  h1 .accent { color: var(--brand); }
+
+  .lede {
+    margin-top: 26px;
+    max-width: 470px;
+    font-size: 22px;
+    line-height: 1.42;
+    color: var(--graphite);
+  }
+  .lede strong { color: var(--ink); font-weight: 600; }
+
+  .foot {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 14px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--graphite);
+  }
+  .foot .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--rosso);
+    flex: none;
+  }
+  .foot .url { color: var(--brand); }
+
+  /* ---- right: the bread, on a dial ---- */
+  .dial {
+    position: absolute;
+    right: -30px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 574px;
+    height: 574px;
+  }
+  .disc {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 44% 34%, #fffdfb 0%, #fbf1f2 56%, #f3e2e5 100%);
+  }
+  .bread {
+    position: absolute;
+    left: 50%;
+    bottom: 30px;
+    transform: translateX(-50%) rotate(-3deg);
+    height: 486px;
+    filter: drop-shadow(0 24px 26px rgba(151, 11, 45, 0.16));
+  }
+</style>
+</head>
+<body>
+  <div class="frame">
+    <div class="copy">
+      <p class="eyebrow"><span class="mark"></span>Khalid's Garage</p>
+      <p class="role">Fullstack · UI/UX · Photo · Video</p>
+
+      <h1>Clean. Workable.<br />Full of <span class="accent">character.</span></h1>
+
+      <p class="lede">
+        I build fullstack apps, design interfaces, and make visual work —
+        <strong>engineer's structure, creative eye.</strong>
+      </p>
+
+      <p class="foot"><span class="dot"></span>fiinnyy.my.id</p>
+    </div>
+
+    <div class="dial">
+      <svg class="disc" viewBox="0 0 520 520" fill="none" aria-hidden="true">
+        <!-- tick ring — instrument-cluster nod -->
+        <circle cx="260" cy="260" r="252" fill="none" stroke="#e7d5d1" stroke-width="3" stroke-dasharray="2 17" />
+        <circle cx="260" cy="260" r="236" fill="none" stroke="#d7bbb6" stroke-width="1.5" />
+        <!-- redline arc -->
+        <path d="M 260 24 A 236 236 0 0 1 448 128" fill="none" stroke="#c12a48" stroke-width="5" stroke-linecap="round" />
+      </svg>
+      <img class="bread" src="../public/icons/logo-navbar.svg" alt="" />
+    </div>
+  </div>
+</body>
+</html>

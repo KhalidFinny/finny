@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "preview": "vite preview",
     "deploy": "node scripts/deploy.mjs",
+    "og": "node scripts/generate-og.mjs",
     "cf-typegen": "wrangler types",
     "postinstall": "sh scripts/patch-blake3-esm.sh 2>/dev/null || true; sh scripts/patch-workerd-stream.sh 2>/dev/null || true"
   },
