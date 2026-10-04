@@ -34,7 +34,7 @@ export default function WindowHeader({
         className="flex shrink-0 items-center"
       >
         <img
-          src="/icons/logo.webp"
+          src="/icons/logo-navbar.svg"
           alt=""
           className="h-8 w-8 shrink-0 object-contain md:h-9 md:w-9"
         />

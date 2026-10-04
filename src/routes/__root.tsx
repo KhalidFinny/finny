@@ -52,9 +52,24 @@ function RootComponent() {
           href="/fonts/ibmplexmono-regular.woff2"
           crossOrigin="anonymous"
         />
-        <link rel="icon" type="image/webp" href="/icons/logo.webp" />
-        <title>Khalid Atthoriq</title>
-        <meta name="description" content="Portfolio of Khalid Atthoriq — Fullstack Developer & UI/UX Designer." />
+        <link rel="icon" type="image/svg+xml" href="/icons/logo-web.svg" />
+        <title>Khalid Atthoriq | Fullstack Creative Developer</title>
+        <meta name="description" content="Khalid Atthoriq is a Fullstack Creative Developer working across digital products, UI/UX, photography, and video." />
+        <link rel="canonical" href="https://fiinnyy.my.id/" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Khalid Atthoriq" />
+        <meta property="og:title" content="Khalid Atthoriq | Fullstack Creative Developer" />
+        <meta property="og:description" content="Khalid Atthoriq is a Fullstack Creative Developer working across digital products, UI/UX, photography, and video." />
+        <meta property="og:url" content="https://fiinnyy.my.id/" />
+        <meta property="og:image" content="https://fiinnyy.my.id/og-image.png" />
+        <meta property="og:image:alt" content="Khalid Atthoriq portfolio preview" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Khalid Atthoriq | Fullstack Creative Developer" />
+        <meta name="twitter:description" content="Khalid Atthoriq is a Fullstack Creative Developer working across digital products, UI/UX, photography, and video." />
+        <meta name="twitter:image" content="https://fiinnyy.my.id/og-image.png" />
+        <meta name="twitter:image:alt" content="Khalid Atthoriq portfolio preview" />
       </head>
       <body>
         <BootScreen onDone={handleBootDone} />

@@ -26,7 +26,7 @@ export default function MobileHeader() {
           className="flex min-w-0 items-center gap-2"
         >
           <img
-            src="/icons/logo.webp"
+            src="/icons/logo-navbar.svg"
             alt=""
             className="h-8 w-8 shrink-0 object-contain"
           />
