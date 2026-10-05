@@ -57,14 +57,49 @@
     overflow: hidden;
   }
 
+  /* Red identity wash — brand red fading out into the paper. */
+  .glow {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(
+        120% 90% at 50% 118%,
+        rgba(151, 11, 45, 0.3) 0%,
+        rgba(151, 11, 45, 0.12) 34%,
+        rgba(151, 11, 45, 0) 66%
+      ),
+      radial-gradient(
+        90% 70% at 100% 0%,
+        rgba(193, 42, 72, 0.16) 0%,
+        rgba(193, 42, 72, 0) 60%
+      );
+  }
+
   /* Faded bread behind the name (home card). */
   .watermark {
     position: absolute;
     left: 50%;
+    top: 52%;
+    transform: translate(-50%, -50%);
+    height: 600px;
+    opacity: 0.3;
+  }
+
+  /* Soft paper veil so the watermark can sit behind the title at full
+     strength without hurting legibility. */
+  .veil {
+    position: absolute;
+    left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    height: 560px;
-    opacity: 0.13;
+    width: 1020px;
+    height: 470px;
+    background: radial-gradient(
+      closest-side,
+      rgba(255, 253, 252, 0.72),
+      rgba(255, 253, 252, 0.5) 55%,
+      rgba(255, 253, 252, 0)
+    );
   }
 
   .content {
@@ -104,13 +139,21 @@
     letter-spacing: -0.02em;
     color: var(--ink);
   }
+  h1 .accent { color: var(--brand); }
+
+  .rule {
+    width: 120px;
+    height: 5px;
+    margin-top: 30px;
+    background: var(--brand);
+  }
 
   .stickers {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 34px;
-    margin-top: 46px;
+    margin-top: 42px;
   }
   .stickers img {
     height: 116px;
@@ -124,10 +167,13 @@
 </head>
 <body>
   <div class="frame">
+    <div class="glow"></div>
     {{WATERMARK}}
+    <div class="veil"></div>
     <div class="content">
       <p class="eyebrow">{{EYEBROW}}</p>
       <h1>{{TITLE}}</h1>
+      <span class="rule"></span>
       <div class="stickers">
         <img src="../public/crown.webp" alt="" />
         <img src="../public/ls400.webp" alt="" />

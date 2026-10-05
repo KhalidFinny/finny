@@ -29,7 +29,12 @@ const manifestPath = resolve(root, 'src/generated/ogImage.ts')
 
 // Page name shown on the card. `watermark` fades the bread behind the name.
 const PAGES = [
-  { key: 'home', eyebrow: '', title: "Khalid's<br />Garage", watermark: true },
+  {
+    key: 'home',
+    eyebrow: '',
+    title: "Khalid's <span class=\"accent\">Garage</span>",
+    watermark: true,
+  },
   { key: 'experiences', eyebrow: "Khalid's Garage", title: 'Experiences' },
   { key: 'projects', eyebrow: "Khalid's Garage", title: 'Projects' },
   { key: 'stats', eyebrow: "Khalid's Garage", title: 'Stats' },
