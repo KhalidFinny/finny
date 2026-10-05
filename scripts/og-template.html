@@ -4,8 +4,9 @@
 <meta charset="utf-8" />
 <title>finny — og card</title>
 <style>
-  /* Real site fonts, referenced from public/fonts so the card carries the
-     same voice as the site. Rendered headlessly to public/og-image.png. */
+  /* Card shell rendered headlessly to a per-page PNG (see generate-og.mjs),
+     which substitutes the eyebrow, title, and watermark slots. Real site fonts
+     so the card carries the same voice as the site. */
   @font-face {
     font-family: "Schibsted Grotesk";
     src: url("../public/fonts/schibstedgrotesk-variable.woff2") format("woff2-variations");
@@ -18,24 +19,14 @@
     font-weight: 400;
     font-style: normal;
   }
-  @font-face {
-    font-family: "Instrument Serif";
-    src: url("../public/fonts/instrumentserif-italic.woff2") format("woff2");
-    font-weight: 400;
-    font-style: italic;
-  }
 
   :root {
     --wall: #f7f2ed;
     --paper: #fffdfc;
     --ink: #18120f;
     --graphite: #736661;
-    --mist: #a08f89;
     --line: #e7d5d1;
-    --deep-line: #d7bbb6;
     --brand: #970b2d;
-    --rosso: #c12a48;
-    --blush: #f8ecee;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -66,28 +57,38 @@
     overflow: hidden;
   }
 
-  /* ---- left: editorial column ---- */
-  .copy {
+  /* Faded bread behind the name (home card). */
+  .watermark {
     position: absolute;
-    left: 66px;
-    top: 58px;
-    width: 560px;
-    height: 486px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    height: 560px;
+    opacity: 0.13;
+  }
+
+  .content {
+    position: absolute;
+    inset: 0;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
   }
 
   .eyebrow {
     display: flex;
     align-items: center;
     gap: 12px;
-    font-family: "Schibsted Grotesk", sans-serif;
-    font-size: 19px;
+    margin-bottom: 22px;
+    font-size: 20px;
     font-weight: 600;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--brand);
   }
+  .eyebrow:empty { display: none; }
   .eyebrow .mark {
     width: 11px;
     height: 11px;
@@ -96,95 +97,41 @@
   }
 
   h1 {
-    margin-top: 30px;
     font-family: "Instrument Serif", Georgia, serif;
     font-weight: 400;
-    font-size: 82px;
-    line-height: 0.93;
+    font-size: 124px;
+    line-height: 0.92;
     letter-spacing: -0.02em;
     color: var(--ink);
   }
-  h1 .accent { color: var(--brand); }
 
-  .lede {
-    margin-top: 26px;
-    max-width: 470px;
-    font-size: 22px;
-    line-height: 1.42;
-    color: var(--graphite);
-  }
-  .lede strong { color: var(--ink); font-weight: 600; }
-
-  .foot {
-    margin-top: auto;
+  .stickers {
     display: flex;
     align-items: center;
-    gap: 14px;
-    font-family: "Schibsted Grotesk", sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--graphite);
+    justify-content: center;
+    gap: 34px;
+    margin-top: 46px;
   }
-  .foot .dot {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: var(--rosso);
-    flex: none;
+  .stickers img {
+    height: 116px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 12px 14px rgba(24, 18, 15, 0.14));
   }
-  .foot .url { color: var(--brand); }
-
-  /* ---- right: the bread, on a dial ---- */
-  .dial {
-    position: absolute;
-    right: -30px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 574px;
-    height: 574px;
-  }
-  .disc {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: radial-gradient(circle at 44% 34%, #fffdfb 0%, #fbf1f2 56%, #f3e2e5 100%);
-  }
-  .bread {
-    position: absolute;
-    left: 50%;
-    bottom: 30px;
-    transform: translateX(-50%) rotate(-3deg);
-    height: 486px;
-    filter: drop-shadow(0 24px 26px rgba(151, 11, 45, 0.16));
-  }
+  .stickers img:first-child { transform: rotate(-4deg); }
+  .stickers img:last-child { transform: rotate(3deg); }
 </style>
 </head>
 <body>
   <div class="frame">
-    <div class="copy">
-      <p class="eyebrow"><span class="mark"></span>Fullstack · UI/UX · Photo · Video</p>
-
-      <h1>Khalid's<br />Garage</h1>
-
-      <p class="lede">
-        I build fullstack apps, design interfaces, and make visual work —
-        <strong>engineer's structure, creative eye.</strong>
-      </p>
-
-      <p class="foot"><span class="dot"></span>fiinnyy.my.id</p>
-    </div>
-
-    <div class="dial">
-      <svg class="disc" viewBox="0 0 520 520" fill="none" aria-hidden="true">
-        <!-- tick ring — instrument-cluster nod -->
-        <circle cx="260" cy="260" r="252" fill="none" stroke="#e7d5d1" stroke-width="3" stroke-dasharray="2 17" />
-        <circle cx="260" cy="260" r="236" fill="none" stroke="#d7bbb6" stroke-width="1.5" />
-        <!-- redline arc -->
-        <path d="M 260 24 A 236 236 0 0 1 448 128" fill="none" stroke="#c12a48" stroke-width="5" stroke-linecap="round" />
-      </svg>
-      <img class="bread" src="../public/icons/logo-navbar.svg" alt="" />
+    {{WATERMARK}}
+    <div class="content">
+      <p class="eyebrow">{{EYEBROW}}</p>
+      <h1>{{TITLE}}</h1>
+      <div class="stickers">
+        <img src="../public/crown.webp" alt="" />
+        <img src="../public/ls400.webp" alt="" />
+      </div>
     </div>
   </div>
 </body>

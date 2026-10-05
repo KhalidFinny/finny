@@ -12,8 +12,16 @@ import useHomeMotion from '@/components/wireframe/home/useHomeMotion'
 import AppScale from '@/components/site/AppScale'
 import { queryClient } from '@/lib/queryClient'
 import { githubQueryOptions, siteQueryOptions } from '@/lib/queries'
+import { buildPageHead } from '@/lib/seo'
 
 export const Route = createFileRoute('/stats/')({
+  head: () =>
+    buildPageHead({
+      title: "Stats — Khalid's Garage",
+      description: 'Live numbers from the garage — GitHub activity and the stats behind the work.',
+      image: 'stats',
+      path: '/stats',
+    }),
   loader: async () => {
     void queryClient.prefetchQuery(githubQueryOptions)
     return queryClient.ensureQueryData(siteQueryOptions)

@@ -9,8 +9,17 @@ import WindowHeader from '@/components/wireframe/home/WindowHeader'
 import { navItems } from '@/components/wireframe/home/data'
 import useHomeMotion from '@/components/wireframe/home/useHomeMotion'
 import AppScale from '@/components/site/AppScale'
+import { buildPageHead } from '@/lib/seo'
 
 export const Route = createFileRoute('/')({
+  head: () =>
+    buildPageHead({
+      title: "Khalid's Garage — Fullstack Creative Developer",
+      description:
+        "I'm Khalid Atthoriq — I build fullstack apps, design interfaces, and make visual work with an engineer's structure and a creative eye.",
+      image: 'home',
+      path: '/',
+    }),
   loader: async () => null,
   pendingComponent: HomePending,
   pendingMs: 0,

@@ -55,3 +55,8 @@ next-env.d.ts
 
 # generated worker types
 /worker-configuration.d.ts
+
+# agent handoff / progress notes
+/HANDOFF.md
+/PROGRESS.md
+/scripts/.og-card-*.tmp.html

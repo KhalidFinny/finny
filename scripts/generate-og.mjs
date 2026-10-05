@@ -1,9 +1,10 @@
 #!/usr/bin/env node
-// Renders scripts/og-template.html to public/og-image-<hash>.png (1200×630)
-// with headless Chrome, then writes the path to src/generated/ogImage.ts.
-// The card is laid out in HTML/CSS so it can reuse the site's real fonts and
-// palette; Chrome rasterizes it crisply without an image lib.
+// Renders one share card per page from scripts/og-template.html into
+// public/og-image-<page>-<hash>.png, then writes the path map to
+// src/generated/ogImage.ts.
 //
+// The card is laid out in HTML/CSS so it can reuse the site's real fonts,
+// palette, and stickers; Chrome rasterizes it crisply without an image lib.
 // The filename carries a content hash: a redesigned card is a new URL, so
 // social platforms and browsers pick it up instead of serving a cached copy.
 // Re-run after editing scripts/og-template.html: `npm run og`.
@@ -17,14 +18,23 @@ import {
   rmSync,
   writeFileSync,
 } from 'node:fs'
+import { tmpdir } from 'node:os'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const template = resolve(root, 'scripts/og-template.html')
+const templatePath = resolve(root, 'scripts/og-template.html')
 const publicDir = resolve(root, 'public')
-const tmp = resolve(publicDir, '.og-image.tmp.png')
-const manifest = resolve(root, 'src/generated/ogImage.ts')
+const manifestPath = resolve(root, 'src/generated/ogImage.ts')
+
+// Page name shown on the card. `watermark` fades the bread behind the name.
+const PAGES = [
+  { key: 'home', eyebrow: '', title: "Khalid's<br />Garage", watermark: true },
+  { key: 'experiences', eyebrow: "Khalid's Garage", title: 'Experiences' },
+  { key: 'projects', eyebrow: "Khalid's Garage", title: 'Projects' },
+  { key: 'stats', eyebrow: "Khalid's Garage", title: 'Stats' },
+  { key: 'music', eyebrow: "Khalid's Garage", title: 'Music' },
+]
 
 const candidates = [
   process.env.CHROME_BIN,
@@ -46,48 +56,76 @@ const chrome = candidates.find((bin) => {
 })
 
 if (!chrome) {
-  console.error('og: no Chrome/Chromium found — set CHROME_BIN to render the card')
+  console.error('og: no Chrome/Chromium found — set CHROME_BIN to render cards')
   process.exit(1)
 }
 
-rmSync(tmp, { force: true })
-execFileSync(
-  chrome,
-  [
-    '--headless=new',
-    '--disable-gpu',
-    '--no-sandbox',
-    '--hide-scrollbars',
-    // The card references the logo SVG by file:// path.
-    '--allow-file-access-from-files',
-    '--force-device-scale-factor=1',
-    '--window-size=1200,630',
-    `--screenshot=${tmp}`,
-    `file://${template}`,
-  ],
-  { stdio: 'inherit' },
-)
+const template = readFileSync(templatePath, 'utf8')
+const eyebrowMarkup = '<span class="mark"></span>'
+const watermarkMarkup =
+  '<img class="watermark" src="../public/icons/logo-navbar.svg" alt="" />'
 
-const bytes = readFileSync(tmp)
-const hash = createHash('sha256').update(bytes).digest('hex').slice(0, 8)
-const fileName = `og-image-${hash}.png`
+const entries = []
+const rendered = new Set()
 
-// Drop stale renders (previous hashes and the old unhashed og-image.png) so
-// exactly one card ships and no year-cached duplicate lingers.
+for (const page of PAGES) {
+  const html = template
+    .replaceAll(
+      '{{EYEBROW}}',
+      page.eyebrow ? `${eyebrowMarkup}${page.eyebrow}` : '',
+    )
+    .replaceAll('{{TITLE}}', page.title)
+    .replaceAll('{{WATERMARK}}', page.watermark ? watermarkMarkup : '')
+
+  const scratch = resolve(root, `scripts/.og-card-${page.key}.tmp.html`)
+  writeFileSync(scratch, html)
+
+  const shot = resolve(tmpdir(), `og-${page.key}-${process.pid}.png`)
+  rmSync(shot, { force: true })
+  execFileSync(
+    chrome,
+    [
+      '--headless=new',
+      '--disable-gpu',
+      '--no-sandbox',
+      '--hide-scrollbars',
+      '--allow-file-access-from-files',
+      '--force-device-scale-factor=1',
+      '--window-size=1200,630',
+      `--screenshot=${shot}`,
+      `file://${scratch}`,
+    ],
+    { stdio: 'inherit' },
+  )
+  rmSync(scratch, { force: true })
+
+  const bytes = readFileSync(shot)
+  rmSync(shot, { force: true })
+  const hash = createHash('sha256').update(bytes).digest('hex').slice(0, 8)
+  const fileName = `og-image-${page.key}-${hash}.png`
+  writeFileSync(resolve(publicDir, fileName), bytes)
+  rendered.add(fileName)
+  entries.push([page.key, `/${fileName}`])
+}
+
+// Drop stale renders so exactly one card per page ships and no year-cached
+// duplicate lingers.
 for (const file of readdirSync(publicDir)) {
-  if (/^og-image.*\.png$/.test(file) && file !== fileName) {
+  if (/^og-image.*\.png$/.test(file) && !rendered.has(file)) {
     rmSync(resolve(publicDir, file), { force: true })
   }
 }
-writeFileSync(resolve(publicDir, fileName), bytes)
-rmSync(tmp, { force: true })
 
-mkdirSync(dirname(manifest), { recursive: true })
+const map = entries.map(([key, path]) => `  ${key}: '${path}',`).join('\n')
+mkdirSync(dirname(manifestPath), { recursive: true })
 writeFileSync(
-  manifest,
+  manifestPath,
   '// AUTO-GENERATED by scripts/generate-og.mjs — run `npm run og`.\n' +
     '// Content-hashed so a redesigned card is a new URL (busts social caches).\n' +
-    `export const ogImagePath = '/${fileName}'\n`,
+    'export const ogImages = {\n' +
+    `${map}\n` +
+    '} as const\n\n' +
+    'export type OgImageKey = keyof typeof ogImages\n',
 )
 
-console.log(`og: wrote public/${fileName}`)
+console.log(`og: wrote ${entries.length} cards`)

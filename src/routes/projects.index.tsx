@@ -13,8 +13,17 @@ import useHomeMotion from '@/components/wireframe/home/useHomeMotion'
 import AppScale from '@/components/site/AppScale'
 import { queryClient } from '@/lib/queryClient'
 import { siteQueryOptions } from '@/lib/queries'
+import { buildPageHead } from '@/lib/seo'
 
 export const Route = createFileRoute('/projects/')({
+  head: () =>
+    buildPageHead({
+      title: "Projects — Khalid's Garage",
+      description:
+        'Programming, UI/UX, photography, and video work — selected projects from the garage.',
+      image: 'projects',
+      path: '/projects',
+    }),
   validateSearch: (search: Record<string, unknown>): ProjectsSearch => {
     const tab = search.tab
     const view = search.view === 'photo' || search.view === 'video' ? search.view : undefined

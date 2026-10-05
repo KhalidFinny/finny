@@ -12,8 +12,16 @@ import useHomeMotion from '@/components/wireframe/home/useHomeMotion'
 import AppScale from '@/components/site/AppScale'
 import { queryClient } from '@/lib/queryClient'
 import { lastFmQueryOptions, siteQueryOptions } from '@/lib/queries'
+import { buildPageHead } from '@/lib/seo'
 
 export const Route = createFileRoute('/music/')({
+  head: () =>
+    buildPageHead({
+      title: "Music — Khalid's Garage",
+      description: "What's playing in the garage right now — recent tracks and listening stats.",
+      image: 'music',
+      path: '/music',
+    }),
   loader: async () => {
     void queryClient.prefetchQuery(lastFmQueryOptions)
     return queryClient.ensureQueryData(siteQueryOptions)

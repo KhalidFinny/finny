@@ -11,8 +11,17 @@ import useHomeMotion from '@/components/wireframe/home/useHomeMotion'
 import AppScale from '@/components/site/AppScale'
 import { queryClient } from '@/lib/queryClient'
 import { siteQueryOptions } from '@/lib/queries'
+import { buildPageHead } from '@/lib/seo'
 
 export const Route = createFileRoute('/experiences/')({
+  head: () =>
+    buildPageHead({
+      title: "Experiences — Khalid's Garage",
+      description:
+        "Where I've worked and what I've built — internships, freelance work, and the organizations I've led.",
+      image: 'experiences',
+      path: '/experiences',
+    }),
   loader: () => queryClient.ensureQueryData(siteQueryOptions),
   pendingComponent: ExperiencesPending,
   pendingMs: 0,
