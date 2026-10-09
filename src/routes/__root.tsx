@@ -80,7 +80,7 @@ function RootComponent() {
 function RootNotFound() {
   return (
     <div className="h-dvh bg-wall p-1.5 md:p-3">
-      <div className="mx-auto flex h-full max-w-[1760px] flex-col overflow-hidden rounded-[18px] border border-line bg-paper page-grid">
+      <div className="mx-auto flex h-full max-w-[1760px] flex-col overflow-hidden rounded-[18px] border border-line bg-paper">
         <WindowHeader items={navItems} />
         <main className="flex min-h-0 flex-1 flex-col items-center justify-center px-6 text-center">
           <p className="ui-sticker-label">404 · Route not found</p>

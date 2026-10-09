@@ -1,10 +1,13 @@
 import { createFileRoute, useLoaderData, useNavigate, useSearch } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { useRef } from 'react'
-import ProjectsCatalog from '@/components/sections/ProjectsCatalog'
-import ProjectsGallery from '@/components/sections/ProjectsGallery'
+import ProjectsTabs from '@/components/sections/projects/ProjectsTabs'
+import {
+  PROJECTS_TABS,
+  type ProjectsTabId,
+  type ProjectsViewId,
+} from '@/components/sections/projects/projectsConfig'
 import Ticker from '@/components/sections/Ticker'
-import EmptyStatePanel from '@/components/site/EmptyStatePanel'
 import Skeleton from '@/components/ui/Skeleton'
 import MobileProjects from '@/components/mobile/MobileProjects'
 import WindowHeader from '@/components/wireframe/home/WindowHeader'
@@ -28,7 +31,7 @@ export const Route = createFileRoute('/projects/')({
     const tab = search.tab
     const view = search.view === 'photo' || search.view === 'video' ? search.view : undefined
     return {
-      ...(TABS.some((t) => t.id === tab) ? { tab: tab as TabId } : {}),
+      ...(PROJECTS_TABS.some((t) => t.id === tab) ? { tab: tab as ProjectsTabId } : {}),
       ...(view ? { view } : {}),
     }
   },
@@ -38,17 +41,9 @@ export const Route = createFileRoute('/projects/')({
   component: ProjectsPage,
 })
 
-const TABS = [
-  { id: 'programming', label: 'Programming' },
-  { id: 'creative', label: 'Creative' },
-] as const
-
-type TabId = (typeof TABS)[number]['id']
-type ViewId = 'photo' | 'video'
-
 interface ProjectsSearch {
-  tab?: TabId
-  view?: ViewId
+  tab?: ProjectsTabId
+  view?: ProjectsViewId
 }
 
 function ProjectsPending() {
@@ -90,10 +85,10 @@ function ProjectsPage() {
   const { data } = useQuery({ ...siteQueryOptions, initialData: loaderData })
   const search = useSearch({ from: '/projects/' })
   const navigate = useNavigate({ from: '/projects/' })
-  const tab: TabId = search.tab ?? 'programming'
-  const view: ViewId = search.view ?? 'photo'
-  const setTab = (next: TabId) => void navigate({ search: { tab: next } })
-  const setView = (next: ViewId) =>
+  const tab: ProjectsTabId = search.tab ?? 'programming'
+  const view: ProjectsViewId = search.view ?? 'photo'
+  const setTab = (next: ProjectsTabId) => void navigate({ search: { tab: next } })
+  const setView = (next: ProjectsViewId) =>
     void navigate({ search: { tab: search.tab ?? 'creative', view: next } })
   const rootRef = useRef<HTMLDivElement>(null)
   useHomeMotion(rootRef)
@@ -115,55 +110,16 @@ function ProjectsPage() {
         ref={rootRef}
         data-motion-pending="false"
         data-motion-ready="false"
-        className="flex h-full w-full flex-col overflow-hidden rounded-[18px] border border-line bg-paper page-grid"
+        className="flex h-full w-full flex-col overflow-hidden rounded-[18px] border border-line bg-paper"
       >
         <WindowHeader items={navItems} cvHref={profile.cv_path} />
-        <div role="tablist" aria-label="Project views" className="border-b border-line px-4 py-2.5 md:px-6">
-          <div className="motion-enter motion-step-2 flex items-center gap-2">
-            {TABS.map((item) => (
-              <button
-                key={item.id}
-                id={`projects-tab-${item.id}`}
-                role="tab"
-                type="button"
-                tabIndex={tab === item.id ? 0 : -1}
-                aria-selected={tab === item.id}
-                aria-controls={`projects-panel-${item.id}`}
-                onClick={() => setTab(item.id)}
-                className={`rounded-md px-3 py-1.5 text-sm font-medium uppercase tracking-[0.14em] transition-colors duration-200 ${
-                  tab === item.id
-                    ? 'bg-ink text-paper'
-                    : 'text-graphite hover:bg-canvas hover:text-ink'
-                }`}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-        </div>
-        <main className={`min-h-0 flex-1 border-b border-line animate-[page-in_300ms_ease-out] motion-reduce:animate-none ${tab === 'programming' ? 'overflow-y-auto xl:overflow-hidden' : 'overflow-y-auto'}`}>
-          {projects.length === 0 ? (
-            <div className="p-4 md:p-6">
-              <EmptyStatePanel
-                label="Garage empty"
-                title="No projects on the lift yet"
-                description="Publish the first project and it lands in this catalog."
-              />
-            </div>
-          ) : (
-          <div key={tab} className="h-full animate-[page-in_250ms_ease-out] motion-reduce:animate-none">
-            {tab === 'programming' ? (
-              <div id="projects-panel-programming" role="tabpanel" aria-labelledby="projects-tab-programming" className="h-full">
-                <ProjectsCatalog projects={projects} />
-              </div>
-            ) : (
-              <div id="projects-panel-creative" role="tabpanel" aria-labelledby="projects-tab-creative">
-                <ProjectsGallery projects={projects} view={view} onViewChange={setView} />
-              </div>
-            )}
-          </div>
-          )}
-        </main>
+        <ProjectsTabs
+          projects={projects}
+          tab={tab}
+          view={view}
+          onTabChange={setTab}
+          onViewChange={setView}
+        />
         <Ticker experiences={experiences} projects={projects} techs={techs} />
         </div>
         </AppScale>

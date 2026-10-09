@@ -1,6 +1,6 @@
 import type { Experience as ExperienceItem } from '@/types/site'
 import MobileShell from '@/components/mobile/MobileShell'
-import { parseBullets, shortenPeriod } from '@/components/sections/Experience'
+import { parseBullets, shortenPeriod } from '@/components/sections/experience/experienceUtils'
 
 export default function MobileExperiences({ experiences }: { experiences: ExperienceItem[] }) {
   return (

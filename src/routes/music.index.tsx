@@ -123,7 +123,7 @@ function MusicPage() {
         ref={rootRef}
         data-motion-pending="false"
         data-motion-ready="false"
-        className="flex h-full w-full flex-col overflow-hidden rounded-[18px] border border-line bg-paper page-grid"
+        className="flex h-full w-full flex-col overflow-hidden rounded-[18px] border border-line bg-paper"
       >
         <WindowHeader items={navItems} cvHref={profile.cv_path} />
         <main className="min-h-0 flex-1 overflow-y-auto border-b border-line animate-[page-in_300ms_ease-out] motion-reduce:animate-none">

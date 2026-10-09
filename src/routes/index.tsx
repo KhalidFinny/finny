@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useRef } from 'react'
 import CanvasPane from '@/components/wireframe/home/CanvasPane'
-import OverviewPane from '@/components/wireframe/home/OverviewPane'
+import HeroIndex from '@/components/wireframe/home/hero/HeroIndex'
 import StatusBar from '@/components/wireframe/home/StatusBar'
 import MobileHome from '@/components/mobile/MobileHome'
 import Skeleton from '@/components/ui/Skeleton'
@@ -106,12 +106,12 @@ function Home() {
             ref={rootRef}
             data-motion-pending="false"
             data-motion-ready="false"
-            className="flex h-full w-full flex-col overflow-hidden rounded-[18px] border border-line bg-paper page-grid"
+            className="flex h-full w-full flex-col overflow-hidden rounded-[18px] border border-line bg-paper"
           >
             <WindowHeader items={navItems} />
 
             <main className="grid min-h-0 flex-1 overflow-y-auto border-b border-line animate-[page-in_300ms_ease-out] motion-reduce:animate-none xl:grid-cols-[minmax(18rem,min(26vw,30rem))_minmax(0,1fr)]">
-              <OverviewPane />
+              <HeroIndex />
               <CanvasPane />
             </main>
 

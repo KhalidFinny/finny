@@ -21,6 +21,16 @@
   --color-mint: #F8ECEE;
   --color-signal: #F8ECEE;
 
+  /* Hero panel surface. Separate from the paper/canvas family so the left pane
+     can carry its own treatment without touching the rest of the app. Warm ink:
+     no black, headings sit in a warm brown. */
+  --color-panel: #FCF8F4;
+  --color-panel-ink: #33201A;
+  --color-panel-muted: #8C6A5D;
+  --color-panel-line: #EADCD3;
+  --color-panel-accent: #970B2D;
+  --color-panel-band: #F6EDE6;
+
   --font-sans: "Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Instrument Serif", Georgia, "Times New Roman", serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
@@ -400,3 +410,5 @@ main > section:not(#home) {
 ::-webkit-scrollbar {
   display: none;
 }
+
+
