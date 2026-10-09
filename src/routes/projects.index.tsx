@@ -62,13 +62,13 @@ function ProjectsPending() {
                 <Skeleton className="h-9 w-24" />
               </div>
             </div>
-            <main className="min-h-0 flex-1 overflow-y-auto border-b border-line px-4 py-6 md:px-6 xl:grid xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] xl:gap-4">
+            <main className="min-h-0 flex-1 overflow-y-auto border-b border-line px-4 py-6 md:px-6 md:grid md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] md:gap-4">
               <div className="space-y-4">
                 <Skeleton className="h-20 w-full" />
                 <Skeleton className="h-20 w-full" />
                 <Skeleton className="h-20 w-full" />
               </div>
-              <div className="mt-4 xl:mt-0">
+              <div className="mt-4 md:mt-0">
                 <Skeleton className="h-96 w-full" />
               </div>
             </main>

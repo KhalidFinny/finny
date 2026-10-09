@@ -60,9 +60,9 @@ export default function Music({ data }: { data: LastFmData }) {
         Music
       </h2>
 
-      <div className="grid gap-6 xl:grid-cols-12 xl:items-start">
+      <div className="grid gap-6 md:grid-cols-12 md:items-start">
         {/* Turntable + player */}
-        <div className="flex flex-col gap-4 xl:col-span-5">
+        <div className="flex flex-col gap-4 md:col-span-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <Sticker>On the turntable</Sticker>
             <p className="inline-flex items-center gap-2 text-sm font-medium uppercase tracking-[0.14em] text-graphite">
@@ -137,7 +137,7 @@ export default function Music({ data }: { data: LastFmData }) {
         </div>
 
         {/* Current record + the numbers */}
-        <div className="flex flex-col gap-4 xl:col-span-7">
+        <div className="flex flex-col gap-4 md:col-span-7">
           {featured && (
             <div className="motion-enter motion-step-2 flex items-center gap-4 rounded-[14px] border border-line bg-paper p-4 md:p-5">
               <Artwork src={featured.image} alt={featured.name} size="h-20 w-20 md:h-24 md:w-24" />
@@ -203,7 +203,7 @@ export default function Music({ data }: { data: LastFmData }) {
       {data.albums.length > 0 && (
         <section aria-label="Albums" className="motion-enter motion-step-4 mt-8">
           <Sticker>Albums</Sticker>
-          <ul className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-6">
+          <ul className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
             {data.albums.map((album) => (
               <WallTile
                 key={`${album.artist}-${album.name}`}
@@ -219,7 +219,7 @@ export default function Music({ data }: { data: LastFmData }) {
       {data.artists.length > 0 && (
         <section aria-label="Artists" className="motion-enter motion-step-4 mt-8">
           <Sticker>Artists</Sticker>
-          <ul className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
+          <ul className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
             {data.artists.map((artist, artistIndex) => (
               <WallTile
                 key={artist.name}
@@ -236,7 +236,7 @@ export default function Music({ data }: { data: LastFmData }) {
       {data.topTracks.length > 0 && (
         <section aria-label="Tracks" className="motion-enter motion-step-5 mt-8">
           <Sticker>Tracks</Sticker>
-          <ul className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
+          <ul className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
             {data.topTracks.map((track, trackIndex) => (
               <WallTile
                 key={`${track.artist}-${track.name}`}

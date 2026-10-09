@@ -136,7 +136,7 @@ export default function CanvasPane() {
   const bringToFront = (key: string) => () => setFrontKey(key)
 
   return (
-    <section className="flex min-h-0 flex-col border-b border-line xl:border-b-0">
+    <section className="flex min-h-0 flex-col border-b border-line md:border-b-0">
       <div className="border-b border-line bg-canvas px-4 py-2.5 md:px-6">
         <div className="motion-enter motion-step-2 flex items-center justify-between gap-4">
           <p className="ui-sticker-label">
@@ -148,7 +148,7 @@ export default function CanvasPane() {
         </div>
       </div>
 
-      <div className="space-y-6 px-4 py-6 xl:hidden">
+      <div className="space-y-6 px-4 py-6 md:hidden">
         <div className="motion-enter motion-step-3">
           <p className="ui-sticker-label">bball · creative</p>
           <img
@@ -227,7 +227,7 @@ export default function CanvasPane() {
         </div>
       </div>
 
-      <div className="relative hidden min-h-[26rem] flex-1 overflow-hidden px-6 py-6 xl:block">
+      <div className="relative hidden min-h-[26rem] flex-1 overflow-hidden px-6 py-6 md:block">
         <DraggablePiece
           className="left-[8%] top-[17%] w-[20%]"
           label="bball · creative"

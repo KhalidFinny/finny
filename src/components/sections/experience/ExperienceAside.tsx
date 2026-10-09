@@ -17,7 +17,7 @@ export default function ExperienceAside({
   const specs = buildSpecs(experiences)
 
   return (
-    <aside className="mt-8 flex flex-col gap-6 xl:mt-0 xl:pl-8">
+    <aside className="mt-8 flex flex-col gap-6 md:mt-0 md:pl-8">
       {education.map((experience, index) => {
         const bullets = parseBullets(experience.description)
         return (

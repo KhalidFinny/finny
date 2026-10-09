@@ -52,7 +52,7 @@ export default function ProjectsTabs({
 
       <main
         className={`min-h-0 flex-1 border-b border-line animate-[page-in_300ms_ease-out] motion-reduce:animate-none ${
-          tab === 'programming' ? 'overflow-y-auto xl:overflow-hidden' : 'overflow-y-auto'
+          tab === 'programming' ? 'overflow-y-auto md:overflow-hidden' : 'overflow-y-auto'
         }`}
       >
         {projects.length === 0 ? (

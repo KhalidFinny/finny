@@ -73,7 +73,7 @@ export default function ProjectsGallery({
               />
             </div>
           ) : (
-          <ul className="mt-5 grid grid-cols-2 gap-x-5 gap-y-10 xl:grid-cols-3 md:gap-x-6">
+          <ul className="mt-5 grid grid-cols-2 gap-x-5 gap-y-10 md:grid-cols-3 md:gap-x-6">
             {filtered.map((project, index) => {
               const videoProject = isVideo(project)
               if (videoProject && project.youtube_embed) {

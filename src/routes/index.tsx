@@ -51,8 +51,8 @@ function HomePending() {
         <AppScale>
           <div className="flex h-full w-full flex-col overflow-hidden rounded-[18px] border border-line bg-paper">
             <WindowHeader items={navItems} />
-            <main className="grid min-h-0 flex-1 overflow-y-auto border-b border-line xl:grid-cols-[minmax(18rem,min(26vw,30rem))_minmax(0,1fr)]">
-              <div className="border-b border-line bg-paper xl:border-b-0 xl:border-r">
+            <main className="grid min-h-0 flex-1 overflow-y-auto border-b border-line md:grid-cols-[minmax(18rem,min(26vw,30rem))_minmax(0,1fr)]">
+              <div className="border-b border-line bg-paper md:border-b-0 md:border-r">
                 <div className="border-b border-line bg-canvas px-4 py-2.5 md:px-6">
                   <Skeleton className="h-8 w-28" />
                 </div>
@@ -63,7 +63,7 @@ function HomePending() {
                   <Skeleton className="h-28 w-full" />
                 </div>
               </div>
-              <div className="border-b border-line bg-paper xl:border-b-0">
+              <div className="border-b border-line bg-paper md:border-b-0">
                 <div className="border-b border-line bg-canvas px-4 py-2.5 md:px-6">
                   <div className="flex items-center justify-between gap-4">
                     <Skeleton className="h-8 w-44" />
@@ -106,11 +106,11 @@ function Home() {
             ref={rootRef}
             data-motion-pending="false"
             data-motion-ready="false"
-            className="flex h-full w-full flex-col overflow-hidden rounded-[18px] border border-line bg-paper"
+            className="flex h-full w-full flex-col overflow-hidden rounded-[18px] border border-line bg-paper page-grid"
           >
             <WindowHeader items={navItems} />
 
-            <main className="grid min-h-0 flex-1 overflow-y-auto border-b border-line animate-[page-in_300ms_ease-out] motion-reduce:animate-none xl:grid-cols-[minmax(18rem,min(26vw,30rem))_minmax(0,1fr)]">
+            <main className="grid min-h-0 flex-1 overflow-y-auto border-b border-line animate-[page-in_300ms_ease-out] motion-reduce:animate-none md:grid-cols-[minmax(18rem,min(26vw,30rem))_minmax(0,1fr)]">
               <HeroIndex />
               <CanvasPane />
             </main>

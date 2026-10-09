@@ -75,7 +75,7 @@ export default function WindowHeader({
         })}
       </nav>
 
-      <div className="ml-auto hidden shrink-0 items-center gap-1.5 xl:flex">
+      <div className="ml-auto hidden shrink-0 items-center gap-1.5 md:flex">
         <a
           href="https://instagram.com/finnn.designs"
           target="_blank"

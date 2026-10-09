@@ -14,7 +14,7 @@ export default function ExperienceRecord({
   return (
     <section id="experience">
       <div className="px-4 py-6 md:px-6">
-        <div className="xl:grid xl:grid-cols-[minmax(0,1.55fr)_minmax(21rem,0.95fr)] xl:gap-6">
+        <div className="md:grid md:grid-cols-[minmax(0,1.55fr)_minmax(21rem,0.95fr)] md:gap-6">
           <div className="space-y-8">
             {entries.map((experience, index) => {
               const bullets = parseBullets(experience.description)
@@ -22,7 +22,7 @@ export default function ExperienceRecord({
               return (
                 <article
                   key={experience.id}
-                  className={`motion-enter motion-step-${Math.min(index + 2, 5)} grid gap-x-6 gap-y-3 border-t border-line pt-5 xl:grid-cols-[9rem_1fr]`}
+                  className={`motion-enter motion-step-${Math.min(index + 2, 5)} grid gap-x-6 gap-y-3 border-t border-line pt-5 md:grid-cols-[9rem_1fr]`}
                 >
                   <p className="ui-label text-brand">
                     {shortenPeriod(experience.period)}

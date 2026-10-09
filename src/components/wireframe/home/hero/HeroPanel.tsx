@@ -10,7 +10,7 @@ export default function HeroPanel({
   children: ReactNode
 }) {
   return (
-    <aside className="flex min-h-0 flex-col border-b border-panel-line bg-panel xl:border-b-0 xl:border-r">
+    <aside className="flex min-h-0 flex-col border-b border-panel-line bg-panel md:border-b-0 md:border-r">
       <div className="border-b border-panel-line bg-panel-band px-4 py-2.5 md:px-6">
         <p className="ui-sticker-label">{label}</p>
       </div>

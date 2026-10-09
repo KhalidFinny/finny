@@ -11,9 +11,9 @@ export default function ProjectsCatalog({ projects }: { projects: Project[] }) {
   return (
     <section
       aria-labelledby="projects-catalog-heading"
-      className="xl:grid xl:h-full xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]"
+      className="md:grid md:h-full md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]"
     >
-      <div className="px-4 py-6 xl:min-h-0 xl:overflow-y-auto md:px-6">
+      <div className="px-4 py-6 md:min-h-0 md:overflow-y-auto md:px-6">
         <h2 id="projects-catalog-heading" className="sr-only">
           Programming projects
         </h2>
@@ -84,7 +84,7 @@ export default function ProjectsCatalog({ projects }: { projects: Project[] }) {
 
       <aside
         aria-labelledby="project-preview-heading"
-        className="border-t border-line xl:min-h-0 xl:overflow-y-auto xl:border-l xl:border-t-0"
+        className="border-t border-line md:min-h-0 md:overflow-y-auto md:border-l md:border-t-0"
       >
         <h2 id="project-preview-heading" className="sr-only">
           Project preview

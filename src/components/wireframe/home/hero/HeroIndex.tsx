@@ -15,14 +15,14 @@ export default function HeroIndex() {
             key={item.no}
             className="flex items-baseline gap-4 border-b border-panel-line py-3.5 last:border-b-0"
           >
-            <span className="w-9 shrink-0 font-serif text-2xl leading-none text-panel-accent">
+            <span className="w-11 shrink-0 font-serif text-3xl leading-none text-panel-accent">
               {item.no}
             </span>
             <span className="min-w-0">
-              <span className="block text-base leading-snug text-panel-ink">
+              <span className="block text-lg leading-snug text-panel-ink">
                 {item.title}
               </span>
-              <span className="mt-1 block text-sm leading-snug text-panel-muted">
+              <span className="mt-1 block text-base leading-snug text-panel-muted">
                 {item.note}
               </span>
             </span>

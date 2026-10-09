@@ -90,8 +90,8 @@ export default function GitHubStats({ stats }: { stats: GitHubStats }) {
         <Heatmap days={stats.days} total={stats.totalContributions} />
       </article>
 
-        <div className="mt-3 xl:grid xl:grid-cols-6 xl:gap-3">
-          <article className="motion-enter motion-step-4 rounded-[14px] border border-line bg-paper p-4 md:p-5 xl:col-span-2">
+        <div className="mt-3 md:grid md:grid-cols-6 md:gap-3">
+          <article className="motion-enter motion-step-4 rounded-[14px] border border-line bg-paper p-4 md:p-5 md:col-span-2">
             <div className="flex items-center gap-3.5">
               <img
                 src={user.avatarUrl}
@@ -116,14 +116,14 @@ export default function GitHubStats({ stats }: { stats: GitHubStats }) {
             </p>
           </article>
 
-          <dl className="mt-3 grid grid-cols-2 gap-3 xl:col-span-4 xl:mt-0 xl:grid-cols-4">
+          <dl className="mt-3 grid grid-cols-2 gap-3 md:col-span-4 md:mt-0 md:grid-cols-4">
             <NumberTile label="Stars" value={stats.reposOk ? stats.totalStars : '—'} icon={faStar} step={3} />
             <NumberTile label="Forks" value={stats.reposOk ? stats.totalForks : '—'} icon={faCodeBranch} step={4} />
             <NumberTile label="Repos" value={user.publicRepos} icon={faFolder} step={5} />
             <NumberTile label="Contributions" value={stats.totalContributions} icon={faChartColumn} step={5} />
           </dl>
 
-          <article className="motion-enter motion-step-4 mt-3 rounded-[14px] border border-line bg-paper p-4 md:p-5 xl:col-span-3 xl:mt-0">
+          <article className="motion-enter motion-step-4 mt-3 rounded-[14px] border border-line bg-paper p-4 md:p-5 md:col-span-3 md:mt-0">
             <h3 className="text-sm font-medium uppercase tracking-[0.14em] text-brand">
               Top languages
             </h3>
@@ -154,7 +154,7 @@ export default function GitHubStats({ stats }: { stats: GitHubStats }) {
             )}
           </article>
 
-          <dl className="mt-3 grid grid-cols-2 gap-3 xl:col-span-3 xl:mt-0">
+          <dl className="mt-3 grid grid-cols-2 gap-3 md:col-span-3 md:mt-0">
             <NumberTile label="Current streak" value={`${activity.currentStreak}d`} icon={faFire} step={3} />
             <NumberTile label="Longest streak" value={`${activity.longestStreak}d`} icon={faTrophy} step={4} />
             <NumberTile label="Active days" value={activity.activeDays} icon={faCalendarCheck} step={5} />
