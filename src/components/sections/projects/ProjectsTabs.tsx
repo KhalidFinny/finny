@@ -2,7 +2,7 @@ import EmptyStatePanel from '@/components/site/EmptyStatePanel'
 import ProjectsCatalog from '@/components/sections/ProjectsCatalog'
 import ProjectsGallery from '@/components/sections/ProjectsGallery'
 import type { Project } from '@/types/site'
-import type { PhotobyPhoto } from '@/server/photoby'
+import type { PhotobyCategory, PhotobyPhoto } from '@/server/photoby'
 import {
   PROJECTS_TABS,
   type ProjectsTabId,
@@ -19,6 +19,8 @@ export default function ProjectsTabs({
   view,
   onTabChange,
   onViewChange,
+  activeCategory,
+  onCategoryChange,
 }: {
   projects: Project[]
   photos: PhotobyPhoto[]
@@ -26,6 +28,8 @@ export default function ProjectsTabs({
   view: ProjectsViewId
   onTabChange: (tab: ProjectsTabId) => void
   onViewChange: (view: ProjectsViewId) => void
+  activeCategory: PhotobyCategory | null
+  onCategoryChange: (category: PhotobyCategory | null) => void
 }) {
   return (
     <>
@@ -88,6 +92,8 @@ export default function ProjectsTabs({
                   photos={photos}
                   view={view}
                   onViewChange={onViewChange}
+                  activeCategory={activeCategory}
+                  onCategoryChange={onCategoryChange}
                 />
               </div>
             )}

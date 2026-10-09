@@ -8,6 +8,24 @@ const FETCH_TIMEOUT_MS = 4000
 
 export type PhotobyCategory = 'people' | 'events' | 'streets' | 'cars' | 'nature'
 
+// The display order and names match photoby's studio, so the same grouping
+// reads the same on both sites.
+export const PHOTOBY_CATEGORY_ORDER: readonly PhotobyCategory[] = [
+  'people',
+  'events',
+  'streets',
+  'cars',
+  'nature',
+]
+
+export const PHOTOBY_CATEGORY_LABELS: Record<PhotobyCategory, string> = {
+  people: 'People',
+  events: 'Events',
+  streets: 'Streets',
+  cars: 'Cars',
+  nature: 'Nature',
+}
+
 export interface PhotobyPhoto {
   id: string
   category: PhotobyCategory

@@ -14,6 +14,10 @@ import WindowHeader from '@/components/wireframe/home/WindowHeader'
 import { navItems } from '@/components/wireframe/home/data'
 import useHomeMotion from '@/components/wireframe/home/useHomeMotion'
 import AppScale from '@/components/site/AppScale'
+import {
+  PHOTOBY_CATEGORY_ORDER,
+  type PhotobyCategory,
+} from '@/server/photoby'
 import { queryClient } from '@/lib/queryClient'
 import { photobyQueryOptions, siteQueryOptions } from '@/lib/queries'
 import { buildPageHead } from '@/lib/seo'
@@ -30,9 +34,13 @@ export const Route = createFileRoute('/projects/')({
   validateSearch: (search: Record<string, unknown>): ProjectsSearch => {
     const tab = search.tab
     const view = search.view === 'photo' || search.view === 'video' ? search.view : undefined
+    const category = PHOTOBY_CATEGORY_ORDER.includes(search.category as PhotobyCategory)
+      ? (search.category as PhotobyCategory)
+      : undefined
     return {
       ...(PROJECTS_TABS.some((t) => t.id === tab) ? { tab: tab as ProjectsTabId } : {}),
       ...(view ? { view } : {}),
+      ...(category ? { category } : {}),
     }
   },
   loader: async () => {
@@ -50,6 +58,7 @@ export const Route = createFileRoute('/projects/')({
 interface ProjectsSearch {
   tab?: ProjectsTabId
   view?: ProjectsViewId
+  category?: PhotobyCategory
 }
 
 function ProjectsPending() {
@@ -94,9 +103,14 @@ function ProjectsPage() {
   const navigate = useNavigate({ from: '/projects/' })
   const tab: ProjectsTabId = search.tab ?? 'programming'
   const view: ProjectsViewId = search.view ?? 'photo'
+  const activeCategory: PhotobyCategory | null = search.category ?? null
   const setTab = (next: ProjectsTabId) => void navigate({ search: { tab: next } })
   const setView = (next: ProjectsViewId) =>
     void navigate({ search: { tab: search.tab ?? 'creative', view: next } })
+  const setCategory = (next: PhotobyCategory | null) =>
+    void navigate({
+      search: { tab: 'creative', view: 'photo', ...(next ? { category: next } : {}) },
+    })
   const rootRef = useRef<HTMLDivElement>(null)
   useHomeMotion(rootRef)
 
@@ -127,6 +141,8 @@ function ProjectsPage() {
           view={view}
           onTabChange={setTab}
           onViewChange={setView}
+          activeCategory={activeCategory}
+          onCategoryChange={setCategory}
         />
         <Ticker experiences={experiences} projects={projects} techs={techs} />
         </div>
