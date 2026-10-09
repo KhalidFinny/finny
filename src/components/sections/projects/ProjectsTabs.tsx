@@ -2,6 +2,7 @@ import EmptyStatePanel from '@/components/site/EmptyStatePanel'
 import ProjectsCatalog from '@/components/sections/ProjectsCatalog'
 import ProjectsGallery from '@/components/sections/ProjectsGallery'
 import type { Project } from '@/types/site'
+import type { PhotobyPhoto } from '@/server/photoby'
 import {
   PROJECTS_TABS,
   type ProjectsTabId,
@@ -13,12 +14,14 @@ import {
 // render it alongside the other layouts.
 export default function ProjectsTabs({
   projects,
+  photos,
   tab,
   view,
   onTabChange,
   onViewChange,
 }: {
   projects: Project[]
+  photos: PhotobyPhoto[]
   tab: ProjectsTabId
   view: ProjectsViewId
   onTabChange: (tab: ProjectsTabId) => void
@@ -82,6 +85,7 @@ export default function ProjectsTabs({
               >
                 <ProjectsGallery
                   projects={projects}
+                  photos={photos}
                   view={view}
                   onViewChange={onViewChange}
                 />

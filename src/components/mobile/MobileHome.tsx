@@ -1,4 +1,5 @@
 import MobileShell from '@/components/mobile/MobileShell'
+import type { PhotobyPhoto } from '@/server/photoby'
 
 const STACK = [
   'React',
@@ -12,7 +13,7 @@ const STACK = [
   'Premiere Pro',
 ] as const
 
-export default function MobileHome() {
+export default function MobileHome({ photos }: { photos: PhotobyPhoto[] }) {
   return (
     <MobileShell>
       <section className="space-y-6">
@@ -32,40 +33,19 @@ export default function MobileHome() {
         </div>
 
         <div className="space-y-4">
+          {photos.slice(0, 2).map((photo, index) => (
+            <div key={photo.id}>
+              <p className="ui-sticker-label">{photo.category} · photoby</p>
+              <img
+                src={photo.src}
+                alt={photo.caption ?? `${photo.category} photograph`}
+                loading={index === 0 ? 'eager' : 'lazy'}
+                className="mt-2 aspect-[4/3] w-full border border-line object-cover"
+              />
+            </div>
+          ))}
           <div>
-            <p className="ui-sticker-label">
-              bball · creative
-            </p>
-            <img
-              src="/portofolio/bball.webp"
-              alt="Basketball motion shot"
-              width={800}
-              height={800}
-              srcSet="/portofolio/bball-400.webp 400w, /portofolio/bball.webp 800w"
-              sizes="92vw"
-              loading="lazy"
-              className="mt-2 aspect-[4/3] w-full border border-line object-cover"
-            />
-          </div>
-          <div>
-            <p className="ui-sticker-label">
-              flower · creative
-            </p>
-            <img
-              src="/portofolio/flower.webp"
-              alt="Pink flowers photo"
-              width={800}
-              height={1067}
-              srcSet="/portofolio/flower-400.webp 400w, /portofolio/flower.webp 800w"
-              sizes="92vw"
-              loading="lazy"
-              className="mt-2 aspect-[4/3] w-full border border-line object-cover"
-            />
-          </div>
-          <div>
-            <p className="ui-sticker-label">
-              novaris · programming
-            </p>
+            <p className="ui-sticker-label">novaris · programming</p>
             <img
               src="/pics/Novaris.webp"
               alt="Novaris project"

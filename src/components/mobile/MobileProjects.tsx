@@ -2,10 +2,13 @@ import type { Project } from '@/types/site'
 import MobileShell from '@/components/mobile/MobileShell'
 
 export default function MobileProjects({ projects }: { projects: Project[] }) {
+  // Photography now comes from photoby, so those project rows are superseded.
+  const visible = projects.filter((project) => project.category_id !== 'photography')
+
   return (
     <MobileShell label="Projects">
       <ul className="space-y-4">
-        {projects.map((project) => {
+        {visible.map((project) => {
           const isOngoing = project.status === 'ongoing'
           return (
             <li key={project.id}>

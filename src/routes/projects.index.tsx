@@ -15,7 +15,7 @@ import { navItems } from '@/components/wireframe/home/data'
 import useHomeMotion from '@/components/wireframe/home/useHomeMotion'
 import AppScale from '@/components/site/AppScale'
 import { queryClient } from '@/lib/queryClient'
-import { siteQueryOptions } from '@/lib/queries'
+import { photobyQueryOptions, siteQueryOptions } from '@/lib/queries'
 import { buildPageHead } from '@/lib/seo'
 
 export const Route = createFileRoute('/projects/')({
@@ -35,7 +35,13 @@ export const Route = createFileRoute('/projects/')({
       ...(view ? { view } : {}),
     }
   },
-  loader: () => queryClient.ensureQueryData(siteQueryOptions),
+  loader: async () => {
+    const [, site] = await Promise.all([
+      queryClient.ensureQueryData(photobyQueryOptions),
+      queryClient.ensureQueryData(siteQueryOptions),
+    ])
+    return site
+  },
   pendingComponent: ProjectsPending,
   pendingMs: 0,
   component: ProjectsPage,
@@ -83,6 +89,7 @@ function ProjectsPending() {
 function ProjectsPage() {
   const loaderData = useLoaderData({ from: '/projects/' })
   const { data } = useQuery({ ...siteQueryOptions, initialData: loaderData })
+  const { data: photos } = useQuery(photobyQueryOptions)
   const search = useSearch({ from: '/projects/' })
   const navigate = useNavigate({ from: '/projects/' })
   const tab: ProjectsTabId = search.tab ?? 'programming'
@@ -115,6 +122,7 @@ function ProjectsPage() {
         <WindowHeader items={navItems} cvHref={profile.cv_path} />
         <ProjectsTabs
           projects={projects}
+          photos={photos ?? []}
           tab={tab}
           view={view}
           onTabChange={setTab}

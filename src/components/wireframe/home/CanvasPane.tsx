@@ -1,6 +1,7 @@
 import { useRef, useState, type PointerEvent, type ReactNode } from 'react'
 import { cn } from '@/components/ui/cn'
 import { useAppScale } from '@/components/site/AppScale'
+import type { PhotobyPhoto } from '@/server/photoby'
 
 const stackTools = [
   'React',
@@ -130,8 +131,9 @@ function DraggablePiece({
   )
 }
 
-export default function CanvasPane() {
+export default function CanvasPane({ photos }: { photos: PhotobyPhoto[] }) {
   const [frontKey, setFrontKey] = useState<string | null>(null)
+  const photoPieces = photos.slice(0, 2)
 
   const bringToFront = (key: string) => () => setFrontKey(key)
 
@@ -149,35 +151,18 @@ export default function CanvasPane() {
       </div>
 
       <div className="space-y-6 px-4 py-6 md:hidden">
-        <div className="motion-enter motion-step-3">
-          <p className="ui-sticker-label">bball · creative</p>
-          <img
-            src="/portofolio/bball.webp"
-            alt="Basketball motion shot"
-            width={800}
-            height={800}
-            srcSet="/portofolio/bball-400.webp 400w, /portofolio/bball.webp 800w"
-            sizes="92vw"
-            loading="lazy"
-            draggable={false}
-            className="mt-2 aspect-[4/3] w-full border border-line bg-canvas object-contain"
-          />
-        </div>
-
-        <div className="motion-enter motion-step-3">
-          <p className="ui-sticker-label">flower · creative</p>
-          <img
-            src="/portofolio/flower.webp"
-            alt="Pink flowers photo"
-            width={800}
-            height={1067}
-            srcSet="/portofolio/flower-400.webp 400w, /portofolio/flower.webp 800w"
-            sizes="92vw"
-            loading="lazy"
-            draggable={false}
-            className="mt-2 aspect-[4/3] w-full border border-line bg-canvas object-contain"
-          />
-        </div>
+        {photoPieces.map((photo, index) => (
+          <div key={photo.id} className="motion-enter motion-step-3">
+            <p className="ui-sticker-label">{photo.category} · photoby</p>
+            <img
+              src={photo.src}
+              alt={photo.caption ?? `${photo.category} photograph`}
+              loading={index === 0 ? 'eager' : 'lazy'}
+              draggable={false}
+              className="mt-2 aspect-[4/3] w-full border border-line bg-canvas object-cover"
+            />
+          </div>
+        ))}
 
         <div className="motion-enter motion-step-4">
           <p className="ui-sticker-label">novaris · programming</p>
@@ -228,49 +213,47 @@ export default function CanvasPane() {
       </div>
 
       <div className="relative hidden min-h-[26rem] flex-1 overflow-hidden px-6 py-6 md:block">
-        <DraggablePiece
-          className="left-[8%] top-[17%] w-[20%]"
-          label="bball · creative"
-          rotation={-4}
-          zIndex={12}
-          front={frontKey === 'bball'}
-          onGrab={bringToFront('bball')}
-        >
-          <img
-            src="/portofolio/bball.webp"
-            alt="Basketball motion shot"
-            width={800}
-            height={800}
-            srcSet="/portofolio/bball-400.webp 400w, /portofolio/bball.webp 800w"
-            sizes="20vw"
-            loading="lazy"
-            decoding="async"
-            draggable={false}
-            className="w-full bg-canvas object-contain"
-          />
-        </DraggablePiece>
+        {photoPieces[0] && (
+          <DraggablePiece
+            className="left-[8%] top-[17%] w-[20%]"
+            label={`${photoPieces[0].category} · photoby`}
+            rotation={-4}
+            zIndex={12}
+            front={frontKey === 'photo-0'}
+            onGrab={bringToFront('photo-0')}
+          >
+            <img
+              src={photoPieces[0].src}
+              alt={photoPieces[0].caption ?? `${photoPieces[0].category} photograph`}
+              sizes="20vw"
+              loading="eager"
+              decoding="async"
+              draggable={false}
+              className="w-full bg-canvas object-cover"
+            />
+          </DraggablePiece>
+        )}
 
-        <DraggablePiece
-          className="left-[37%] top-[12%] w-[19%]"
-          label="flower · creative"
-          rotation={3}
-          zIndex={14}
-          front={frontKey === 'flower'}
-          onGrab={bringToFront('flower')}
-        >
-          <img
-            src="/portofolio/flower.webp"
-            alt="Pink flowers photo"
-            width={800}
-            height={1067}
-            srcSet="/portofolio/flower-400.webp 400w, /portofolio/flower.webp 800w"
-            sizes="19vw"
-            loading="lazy"
-            decoding="async"
-            draggable={false}
-            className="w-full bg-canvas object-contain"
-          />
-        </DraggablePiece>
+        {photoPieces[1] && (
+          <DraggablePiece
+            className="left-[37%] top-[12%] w-[19%]"
+            label={`${photoPieces[1].category} · photoby`}
+            rotation={3}
+            zIndex={14}
+            front={frontKey === 'photo-1'}
+            onGrab={bringToFront('photo-1')}
+          >
+            <img
+              src={photoPieces[1].src}
+              alt={photoPieces[1].caption ?? `${photoPieces[1].category} photograph`}
+              sizes="19vw"
+              loading="lazy"
+              decoding="async"
+              draggable={false}
+              className="w-full bg-canvas object-cover"
+            />
+          </DraggablePiece>
+        )}
 
         <DraggablePiece
           className="left-[17%] top-[45%] w-[38%]"

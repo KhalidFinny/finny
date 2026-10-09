@@ -1,4 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useLoaderData } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
 import { useRef } from 'react'
 import CanvasPane from '@/components/wireframe/home/CanvasPane'
 import HeroIndex from '@/components/wireframe/home/hero/HeroIndex'
@@ -9,6 +10,8 @@ import WindowHeader from '@/components/wireframe/home/WindowHeader'
 import { navItems } from '@/components/wireframe/home/data'
 import useHomeMotion from '@/components/wireframe/home/useHomeMotion'
 import AppScale from '@/components/site/AppScale'
+import { queryClient } from '@/lib/queryClient'
+import { photobyQueryOptions } from '@/lib/queries'
 import { buildPageHead } from '@/lib/seo'
 
 export const Route = createFileRoute('/')({
@@ -20,7 +23,7 @@ export const Route = createFileRoute('/')({
       image: 'home',
       path: '/',
     }),
-  loader: async () => null,
+  loader: () => queryClient.ensureQueryData(photobyQueryOptions),
   pendingComponent: HomePending,
   pendingMs: 0,
   component: Home,
@@ -94,11 +97,13 @@ function HomePending() {
 function Home() {
   const rootRef = useRef<HTMLDivElement>(null)
   useHomeMotion(rootRef)
+  const loaderPhotos = useLoaderData({ from: '/' })
+  const { data: photos } = useQuery({ ...photobyQueryOptions, initialData: loaderPhotos })
 
   return (
     <>
       <div className="md:hidden">
-        <MobileHome />
+        <MobileHome photos={photos ?? []} />
       </div>
       <div className="hidden md:block">
         <AppScale>
@@ -112,7 +117,7 @@ function Home() {
 
             <main className="grid min-h-0 flex-1 overflow-y-auto border-b border-line animate-[page-in_300ms_ease-out] motion-reduce:animate-none md:grid-cols-[minmax(18rem,min(26vw,30rem))_minmax(0,1fr)]">
               <HeroIndex />
-              <CanvasPane />
+              <CanvasPane photos={photos ?? []} />
             </main>
 
             <StatusBar />
