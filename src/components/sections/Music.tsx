@@ -52,7 +52,7 @@ export default function Music({ data }: { data: LastFmData }) {
     setIndex((i) => (i + 1) % playlist.length)
   }
 
-  const statusLabel = playing ? 'Now playing' : current ? 'On the turntable' : 'Idle'
+  const statusLabel = playing ? 'Now playing' : 'Idle'
 
   return (
     <section aria-labelledby="music-heading" className="px-4 py-6 md:px-6">
