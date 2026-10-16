@@ -1,26 +1,19 @@
-import { useEffect, type RefObject } from 'react'
+import { useEffect, useState } from 'react'
 
-export default function useHomeMotion(rootRef: RefObject<HTMLElement | null>) {
+// Readiness for the page's reveal animation. It is returned as state rather than written
+// onto the DOM: the attribute is rendered by React, so a later re-render cannot reset it
+// back to hidden and leave the content invisible.
+export default function useHomeMotion() {
+  const [ready, setReady] = useState(false)
+
   useEffect(() => {
-    const root = rootRef.current
-    if (!root) return
-
-    root.dataset.motionReady = 'false'
-
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      root.dataset.motionReady = 'true'
+      setReady(true)
       return
     }
+    const raf = requestAnimationFrame(() => setReady(true))
+    return () => cancelAnimationFrame(raf)
+  }, [])
 
-    let cancelled = false
-    const raf = requestAnimationFrame(() => {
-      if (cancelled) return
-      root.dataset.motionReady = 'true'
-    })
-
-    return () => {
-      cancelled = true
-      cancelAnimationFrame(raf)
-    }
-  }, [rootRef])
+  return ready
 }

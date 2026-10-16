@@ -1,6 +1,5 @@
 import { createFileRoute, useLoaderData, useNavigate, useSearch } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { useRef } from 'react'
 import ProjectsTabs from '@/components/sections/projects/ProjectsTabs'
 import {
   PROJECTS_TABS,
@@ -10,10 +9,7 @@ import {
 import Ticker from '@/components/sections/Ticker'
 import Skeleton from '@/components/ui/Skeleton'
 import MobileProjects from '@/components/mobile/MobileProjects'
-import WindowHeader from '@/components/wireframe/home/WindowHeader'
-import { navItems } from '@/components/wireframe/home/data'
 import useHomeMotion from '@/components/wireframe/home/useHomeMotion'
-import AppScale from '@/components/site/AppScale'
 import {
   PHOTOBY_CATEGORY_ORDER,
   type PhotobyCategory,
@@ -68,9 +64,7 @@ function ProjectsPending() {
         <Skeleton className="h-36 w-full rounded-none border-0" />
       </div>
       <div className="hidden md:block">
-        <AppScale>
           <div className="flex h-full w-full flex-col overflow-hidden rounded-[18px] border border-line bg-paper">
-            <WindowHeader items={navItems} />
             <div className="border-b border-line px-4 py-2.5 md:px-6">
               <div className="flex gap-2">
                 <Skeleton className="h-9 w-28" />
@@ -89,7 +83,6 @@ function ProjectsPending() {
             </main>
             <div className="h-12 shrink-0 border-t border-line bg-paper" />
           </div>
-        </AppScale>
       </div>
     </>
   )
@@ -111,8 +104,7 @@ function ProjectsPage() {
     void navigate({
       search: { tab: 'creative', view: 'photo', ...(next ? { category: next } : {}) },
     })
-  const rootRef = useRef<HTMLDivElement>(null)
-  useHomeMotion(rootRef)
+  const motionReady = useHomeMotion()
 
   if (!data) {
     return <ProjectsPending />
@@ -126,14 +118,11 @@ function ProjectsPage() {
         <MobileProjects projects={projects} />
       </div>
       <div className="hidden md:block">
-        <AppScale>
       <div
-        ref={rootRef}
         data-motion-pending="false"
-        data-motion-ready="false"
+        data-motion-ready={motionReady ? 'true' : 'false'}
         className="flex h-full w-full flex-col overflow-hidden rounded-[18px] border border-line bg-paper"
       >
-        <WindowHeader items={navItems} cvHref={profile.cv_path} />
         <ProjectsTabs
           projects={projects}
           photos={photos ?? []}
@@ -146,7 +135,6 @@ function ProjectsPage() {
         />
         <Ticker experiences={experiences} projects={projects} techs={techs} />
         </div>
-        </AppScale>
       </div>
     </>
   )

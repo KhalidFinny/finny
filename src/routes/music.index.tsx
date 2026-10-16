@@ -1,15 +1,11 @@
 import { createFileRoute, useLoaderData } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { useRef } from 'react'
 import Music from '@/components/sections/Music'
 import Ticker from '@/components/sections/Ticker'
 import MobileShell from '@/components/mobile/MobileShell'
 import EmptyStatePanel from '@/components/site/EmptyStatePanel'
 import Skeleton from '@/components/ui/Skeleton'
-import WindowHeader from '@/components/wireframe/home/WindowHeader'
-import { navItems } from '@/components/wireframe/home/data'
 import useHomeMotion from '@/components/wireframe/home/useHomeMotion'
-import AppScale from '@/components/site/AppScale'
 import { queryClient } from '@/lib/queryClient'
 import { lastFmQueryOptions, siteQueryOptions } from '@/lib/queries'
 import { buildPageHead } from '@/lib/seo'
@@ -73,15 +69,12 @@ function MusicPending() {
         <MusicSkeleton />
       </div>
       <div className="hidden md:block">
-        <AppScale>
           <div className="flex h-full w-full flex-col overflow-hidden rounded-[18px] border border-line bg-paper">
-            <WindowHeader items={navItems} />
             <main className="min-h-0 flex-1 overflow-y-auto border-b border-line px-4 py-6 md:px-6">
               <MusicSkeleton />
             </main>
             <div className="h-12 shrink-0 border-t border-line bg-paper" />
           </div>
-        </AppScale>
       </div>
     </>
   )
@@ -91,8 +84,7 @@ function MusicPage() {
   const loaderSite = useLoaderData({ from: '/music/' })
   const siteQuery = useQuery({ ...siteQueryOptions, initialData: loaderSite })
   const musicQuery = useQuery(lastFmQueryOptions)
-  const rootRef = useRef<HTMLDivElement>(null)
-  useHomeMotion(rootRef)
+  const motionReady = useHomeMotion()
 
   const data = siteQuery.data
   const music = musicQuery.data
@@ -118,14 +110,11 @@ function MusicPage() {
         </MobileShell>
       </div>
       <div className="hidden md:block">
-        <AppScale>
       <div
-        ref={rootRef}
         data-motion-pending="false"
-        data-motion-ready="false"
+        data-motion-ready={motionReady ? 'true' : 'false'}
         className="flex h-full w-full flex-col overflow-hidden rounded-[18px] border border-line bg-paper"
       >
-        <WindowHeader items={navItems} cvHref={profile.cv_path} />
         <main className="min-h-0 flex-1 overflow-y-auto border-b border-line animate-[page-in_300ms_ease-out] motion-reduce:animate-none">
           {isMusicLoading ? (
             <MusicSkeleton />
@@ -137,7 +126,6 @@ function MusicPage() {
         </main>
         <Ticker experiences={experiences} projects={projects} techs={techs} />
         </div>
-        </AppScale>
       </div>
     </>
   )

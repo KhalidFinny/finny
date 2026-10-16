@@ -7,6 +7,7 @@ import WindowHeader from '@/components/wireframe/home/WindowHeader'
 import { navItems } from '@/components/wireframe/home/data'
 import { queryClient } from '@/lib/queryClient'
 import BootScreen from '@/components/site/BootScreen'
+import SiteScreen from '@/components/screen/SiteScreen'
 import { buildPageHead } from '@/lib/seo'
 import '@/styles.css'
 
@@ -68,7 +69,13 @@ function RootComponent() {
         <BootScreen onDone={handleBootDone} />
         <div inert={booting}>
           <QueryClientProvider client={queryClient}>
-            <Outlet />
+            {/* The frame lives here, not in the routes: navigating between sections swaps
+                only the screen's content instead of rebuilding the panel and its canvas.
+                `revealed` is the boot mask lifting: the panel's opening waits for it rather
+                than playing behind the mask. */}
+            <SiteScreen revealed={!booting}>
+              <Outlet />
+            </SiteScreen>
           </QueryClientProvider>
         </div>
         <Scripts />
